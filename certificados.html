@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=0.9" />
   <title>Dashboard de Monitoramento de Datas - Vida Farmácias</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
@@ -126,8 +126,21 @@
     .app {
       margin: 0 auto;
       padding: 32px 20px 48px;
-      max-width: 1600px;
+      max-width: 100vw;
     }
+
+    /* --- ESTILO CRÍTICO ADICIONADO: Ajuste do conteúdo principal --- */
+    .main-content {
+      margin-left: 260px; /* Largura padrão do sidebar (200px) + folga */
+      width: 90vw;
+      transition: 0.25s ease;
+    }
+
+    /* Ajuste quando o SIDEBAR estiver FECHADO */
+    .sidebar.collapsed + .main-content {
+      margin-left: 80px; /* Largura do sidebar collapsed (60px) + folga */
+    }
+    /* ------------------------------------------------------------- */
 
     .topbar {
       display: flex;
@@ -334,7 +347,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1500px;
+      min-width: 100%;
       background: rgba(10, 16, 29, 0.8);
     }
 
@@ -635,11 +648,18 @@
         <i class="fas fa-file"></i>
         <span>Relatórios</span>
       </a>
+
+      
+      <a href="processos.html" class="menu-item">
+        <i class="fa-regular fa-calendar-check"></i>
+        <span>Processos</span>
+      </a>
+      
       
     </nav>
   </aside>
 
-  <!-- CONTEÚDO -->
+  <!-- CONTEÚDO PRINCIPAL COM ID "mainContent" PARA O AJUSTE CSS -->
   <div id="mainContent" class="main-content">
     <!-- SEU CONTEÚDO EXISTENTE FICA AQUI -->
 
@@ -800,12 +820,10 @@
               <th>ID</th>
               <th>Nome Fantasia</th>
               <th>Anjo</th>
-              <th>Município / UF</th>
               <th>Relatório 1</th>
               <th>Relatório 2</th>
               <th>Relatório 3</th>
               <th>Certificado</th>
-              <th>Status Geral</th>
               <th>Ações</th>
             </tr>
           </thead>
@@ -1174,12 +1192,10 @@
             <td>${escapeHtml(record.id)}</td>
             <td>${escapeHtml(formatValue(record.NOME_FANTASIA))}</td>
             <td>${escapeHtml(formatValue(record.ANJO))}</td>
-            <td>${escapeHtml(formatValue(record.MUNICÍPIO))} / ${escapeHtml(formatValue(record.UF))}</td>
             <td>${renderDateCell(record.data_relatorio_1, r1)}</td>
             <td>${renderDateCell(record.data_relatorio_2, r2)}</td>
             <td>${renderDateCell(record.data_relatorio_3, r3)}</td>
             <td>${renderDateCell(record.data_certificado, cert)}</td>
-            <td>${renderGeneralStatus(record._status)}</td>
             <td>
               <div class="actions">
                 <button class="action-btn" data-action="edit" data-id="${record.id}">
@@ -1373,25 +1389,34 @@
         .replaceAll("'", "&#039;");
     }
 
-        const sidebar = document.getElementById("sidebar");
-const toggleBtn = document.getElementById("toggleSidebar");
+    // ========== LÓGICA DO MENU LATERAL (COPIADA E AJUSTADA DA PRIMEIRA PÁGINA) ==========
+    const sidebar = document.getElementById("sidebar");
+    const toggleBtn = document.getElementById("toggleSidebar");
 
-// carregar estado salvo
-document.addEventListener("DOMContentLoaded", () => {
-  const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+    // carregar estado salvo
+    document.addEventListener("DOMContentLoaded", () => {
+      // IMPORTANTE: usar a mesma chave 'sidebar-collapsed-processos' para manter a consistência
+      // ou uma chave nova. Vamos usar a mesma para que o estado seja compartilhado entre as páginas.
+      const isCollapsed = localStorage.getItem("sidebar-collapsed-processos") === "true";
 
-  if (isCollapsed) {
-    sidebar.classList.add("collapsed");
-  }
-});
+      if (isCollapsed) {
+        sidebar.classList.add("collapsed");
+      } else {
+        // Garante que a classe 'collapsed' seja removida se o estado salvo for 'false'
+        sidebar.classList.remove("collapsed");
+      }
+    });
 
-// toggle
-toggleBtn.addEventListener("click", () => {
-  sidebar.classList.toggle("collapsed");
+    // toggle
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("collapsed");
 
-  const isCollapsed = sidebar.classList.contains("collapsed");
-  localStorage.setItem("sidebar-collapsed", isCollapsed);
-});
+      const isCollapsed = sidebar.classList.contains("collapsed");
+      // Usar a mesma chave do localStorage da primeira página
+      localStorage.setItem("sidebar-collapsed-processos", isCollapsed);
+    });
+    // ====================================================================================
+
   </script>
 
     </div>
