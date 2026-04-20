@@ -279,7 +279,7 @@ function renderTable() {
               ${
                 instagramUsername
                   ? `<a
-                      class="action-btn instagram"
+                      class="action-btn instagram" 
                       href="https://www.instagram.com/${instagramUsername}"
                       target="_blank"
                       rel="noopener noreferrer"

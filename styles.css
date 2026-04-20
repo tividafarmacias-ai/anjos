@@ -64,6 +64,12 @@ textarea {
   margin-bottom: 24px;
 }
 
+.action-btn.instagram {
+  background: linear-gradient(135deg, #833ab46d, #fd1d1d61, #fcb04565);
+  color: white;
+  text-decoration: none;
+}
+
 .badge {
   display: inline-block;
   padding: 6px 12px;
