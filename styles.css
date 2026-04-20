@@ -38,6 +38,8 @@ textarea {
   font: inherit;
 }
 
+
+
 .action-btn.whatsapp {
   background: #16a34a;
   color: white;
@@ -45,6 +47,102 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+/* LAYOUT BASE */
+.layout {
+  display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 200px;
+  height: 100vh;
+  background: var(--panel);
+  border-right: 1px solid var(--border);
+  position: fixed;
+  left: 0;
+  top: 0;
+  transition: 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+/* COLAPSADA */
+.sidebar.collapsed {
+  width: 60px;
+}
+
+/* HEADER */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  justify-content: center;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--primary);
+}
+
+/* BOTÃO */
+.toggle-btn {
+  background: none;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* MENU */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  gap: 6px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  justify-content: center;
+  border-radius: 10px;
+  color: var(--text);
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.menu-item:hover {
+  background: rgba(79, 140, 255, 0.1);
+}
+
+.menu-item i {
+  width: 20px;
+  text-align: center;
+}
+
+/* TEXTO SOME QUANDO FECHADO */
+.sidebar.collapsed .menu-item span {
+  display: none;
+}
+
+/* CONTEÚDO */
+.main-content {
+  margin-left: 260px;
+  width: 100%;
+  transition: 0.25s ease;
+}
+
+/* AJUSTE QUANDO FECHADO */
+.sidebar.collapsed + .main-content {
+  margin-left: 80px;
 }
 
 .action-btn.whatsapp:hover {
@@ -65,7 +163,7 @@ textarea {
 }
 
 .action-btn.instagram {
-  background: linear-gradient(135deg, #833ab4b1, #fd1d1daa, #fcb045b4);
+  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
   color: white;
   text-decoration: none;
 }

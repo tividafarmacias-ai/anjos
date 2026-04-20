@@ -1,4 +1,4 @@
-const FIREBASE_BASE_URL = "https://certificado-7974e-default-rtdb.firebaseio.com";
+ const FIREBASE_BASE_URL = "https://certificado-7974e-default-rtdb.firebaseio.com";
 
 const state = {
   records: [],
@@ -674,3 +674,23 @@ function escapeHtml(value) {
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#039;");
 }
+
+const sidebar = document.getElementById("sidebar");
+const toggleBtn = document.getElementById("toggleSidebar");
+
+// carregar estado salvo
+document.addEventListener("DOMContentLoaded", () => {
+  const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true";
+
+  if (isCollapsed) {
+    sidebar.classList.add("collapsed");
+  }
+});
+
+// toggle
+toggleBtn.addEventListener("click", () => {
+  sidebar.classList.toggle("collapsed");
+
+  const isCollapsed = sidebar.classList.contains("collapsed");
+  localStorage.setItem("sidebar-collapsed", isCollapsed);
+});
