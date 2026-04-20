@@ -36,6 +36,7 @@ const FORM_SECTIONS = [
       { key: "PROPRIETÁRIO", label: "Proprietário", type: "text", col: 6 },
       { key: "GESTOR_DA_LOJA", label: "Gestor da Loja", type: "text", col: 6 },
       { key: "Whatsapp", label: "Whatsapp", type: "text", col: 4 },
+      { key: "instagram", label: "Instagram", type: "text", col: 2 },
 
 
       { key: "CNPJ", label: "CNPJ", type: "text", col: 4 },
@@ -110,6 +111,7 @@ const detailsFields = [
   "NOME_FANTASIA",
   "PROPRIETÁRIO",
   "Whatsapp",
+  "instagram",
   "CONSULTORIA_EXTERNA",
   "GESTOR_DA_LOJA",
   "CNPJ",
@@ -189,6 +191,18 @@ async function loadRecords() {
   }
 }
 
+function normalizeInstagramUsername(value) {
+  if (!value) return "";
+
+  return String(value)
+    .trim()
+    .replace(/^@+/, "")
+    .replace(/^https?:\/\/(www\.)?instagram\.com\//i, "")
+    .replace(/^instagram\.com\//i, "")
+    .replace(/\/.*$/, "")
+    .trim();
+}
+
 function normalizeFirebaseData(data) {
   if (!data) return [];
 
@@ -236,33 +250,49 @@ function renderTable() {
         return `<td>${escapeHtml(formatValue(value))}</td>`;
       }).join("");
 
+      const whatsappNumber = normalizeWhatsappNumber(record["Whatsapp"]);
+      const instagramUsername = normalizeInstagramUsername(record["instagram"]);
+
       return `
         <tr>
           ${cells}
           <td>
             <div class="actions">
-            <button class="action-btn details" data-action="details" data-id="${record.id}" title="Ver Detalhes">
+              <button class="action-btn details" data-action="details" data-id="${record.id}" title="Ver Detalhes">
                 <i class="fas fa-eye"></i>
-            </button>
+              </button>
 
-            ${
-                normalizeWhatsappNumber(record["Whatsapp"])
-                    ? `<a
-                        class="action-btn whatsapp"
-                        href="https://wa.me/${normalizeWhatsappNumber(record["Whatsapp"])}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        title="Enviar WhatsApp"
+              ${
+                whatsappNumber
+                  ? `<a
+                      class="action-btn whatsapp"
+                      href="https://wa.me/${whatsappNumber}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Enviar WhatsApp"
                     >
-                        <i class="fab fa-whatsapp"></i>
+                      <i class="fab fa-whatsapp"></i>
                     </a>`
-                    : ""
-            }
+                  : ""
+              }
 
-            <button class="action-btn edit" data-action="edit" data-id="${record.id}" title="Editar Registro">
+              ${
+                instagramUsername
+                  ? `<a
+                      class="action-btn instagram"
+                      href="https://www.instagram.com/${instagramUsername}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Abrir Instagram"
+                    >
+                      <i class="fab fa-instagram"></i>
+                    </a>`
+                  : ""
+              }
+
+              <button class="action-btn edit" data-action="edit" data-id="${record.id}" title="Editar Registro">
                 <i class="fas fa-edit"></i>
-            </button>
-            
+              </button>
             </div>
           </td>
         </tr>
@@ -287,6 +317,7 @@ function bindTableActions() {
   });
 }
 
+
 function handleSearch(event) {
   const term = event.target.value.trim().toLowerCase();
 
@@ -299,17 +330,18 @@ function handleSearch(event) {
 
   state.filteredRecords = state.records.filter((record) => {
     const searchBase = [
-        record.id,
-        record["NOME FANTASIA"],
-        record["RAZÃO SOCIAL"],
-        record["MUNICÍPIO"],
-        record["UF"],
-        record["ANJO"],
-        record["PROPRIETÁRIO"],
-        record["CNPJ"],
-        record["EMAIL"],
-        record["Whatsapp"],
-        ]
+      record.id,
+      record["NOME_FANTASIA"],
+      record["RAZÃO_SOCIAL"],
+      record["MUNICÍPIO"],
+      record["UF"],
+      record["ANJO"],
+      record["PROPRIETÁRIO"],
+      record["CNPJ"],
+      record["EMAIL"],
+      record["Whatsapp"],
+      record["instagram"],
+    ]
       .filter(Boolean)
       .join(" ")
       .toLowerCase();
@@ -337,8 +369,6 @@ function openDetailsModal(id) {
   const record = state.records.find((item) => item.id === id);
   if (!record) return;
 
-  console.log(record)
-
   document.getElementById("detailsSubtitle").textContent =
     `${record["NOME_FANTASIA"] || "Sem nome"} • ID ${record.id}`;
 
@@ -350,23 +380,36 @@ function openDetailsModal(id) {
           ? record["MATRIZ_FILIAL"]
           : record[field];
 
-    const isWhatsapp = field === "Whatsapp";
-    const whatsappNumber = normalizeWhatsappNumber(value);
+      const isWhatsapp = field === "Whatsapp";
+      const isInstagram = field === "instagram";
 
-    return `
-    <div class="detail-card">
-        <h4>${escapeHtml(field)}</h4>
-        <p>
-        ${
-            isWhatsapp && whatsappNumber
-            ? `<a href="https://wa.me/${whatsappNumber}" target="_blank" rel="noopener noreferrer">
-                ${escapeHtml(formatValue(value))}
-                </a>`
-            : escapeHtml(formatValue(value))
-        }
-        </p>
-    </div>
-    `;
+      const whatsappNumber = normalizeWhatsappNumber(value);
+      const instagramUsername = normalizeInstagramUsername(value);
+
+      let renderedValue = escapeHtml(formatValue(value));
+
+      if (isWhatsapp && whatsappNumber) {
+        renderedValue = `
+          <a href="https://wa.me/${whatsappNumber}" target="_blank" rel="noopener noreferrer">
+            ${escapeHtml(formatValue(value))}
+          </a>
+        `;
+      }
+
+      if (isInstagram && instagramUsername) {
+        renderedValue = `
+          <a href="https://www.instagram.com/${instagramUsername}" target="_blank" rel="noopener noreferrer">
+            @${escapeHtml(instagramUsername)}
+          </a>
+        `;
+      }
+
+      return `
+        <div class="detail-card">
+          <h4>${escapeHtml(field)}</h4>
+          <p>${renderedValue}</p>
+        </div>
+      `;
     })
     .join("");
 
