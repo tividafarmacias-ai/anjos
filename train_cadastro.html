@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia de Procedimentos · Nova Loja / Colaborador</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b1220;
+      --bg-soft: #111827;
+      --panel: #141d2f;
+      --panel-2: #1a2540;
+      --border: #2a3554;
+      --text: #e5edf9;
+      --muted: #98a6c7;
+      --primary: #4f8cff;
+      --primary-hover: #3f7cf0;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+      --radius: 18px;
+      --radius-sm: 12px;
+      --transition: 0.2s ease;
+      --sidebar-width: 360px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top left, rgba(79, 140, 255, 0.12), transparent 22%),
+        radial-gradient(circle at top right, rgba(239, 68, 68, 0.08), transparent 20%),
+        var(--bg);
+      font-family: "Inter", sans-serif;
+      color: var(--text);
+    }
+
+    a {
+      color: #8ec5ff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) var(--sidebar-width);
+      gap: 24px;
+      max-width: 1700px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+      align-items: start;
+    }
+
+    .main-content {
+      min-width: 0;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 20px;
+      align-self: start;
+      background: rgba(20, 29, 47, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      max-height: calc(100vh - 40px);
+      overflow: auto;
+    }
+
+    .sidebar-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(20, 29, 47, 0.98);
+      backdrop-filter: blur(8px);
+      z-index: 5;
+    }
+
+    .sidebar-header h2 {
+      font-size: 20px;
+      margin-bottom: 6px;
+    }
+
+    .sidebar-header p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .progress-box {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 16px;
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #0d1526;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), #76a8ff);
+      transition: width var(--transition);
+    }
+
+    .progress-text {
+      margin-top: 10px;
+      font-size: 12px;
+      color: #c7d5f0;
+    }
+
+    .sidebar-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      padding: 11px 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: #22304f;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .checklist-nav {
+      padding: 18px 20px 20px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 20px 1fr;
+      align-items: start;
+      gap: 12px;
+      padding: 12px 12px;
+      border-radius: 14px;
+      background: rgba(10, 16, 29, 0.78);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .check-item:hover {
+      border-color: rgba(79, 140, 255, 0.4);
+      background: rgba(79, 140, 255, 0.06);
+    }
+
+    .check-item input[type="checkbox"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .check-item-content {
+      min-width: 0;
+    }
+
+    .check-item a {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      text-decoration: none;
+      line-height: 1.4;
+    }
+
+    .check-item a:hover {
+      color: #bcd5ff;
+    }
+
+    .check-status {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .check-item.done {
+      border-color: rgba(34, 197, 94, 0.3);
+      background: rgba(34, 197, 94, 0.08);
+    }
+
+    .check-item.done a {
+      color: #d4f7de;
+    }
+
+    .container {
+      width: 100%;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #121b2f 0%, #1a2540 100%);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      color: white;
+      box-shadow: var(--shadow);
+    }
+
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .header h1 span {
+      background: rgba(79, 140, 255, 0.15);
+      color: #c9dcff;
+      font-size: 0.95rem;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      border: 1px solid rgba(79, 140, 255, 0.25);
+    }
+
+    .header p {
+      margin-top: 14px;
+      font-size: 1rem;
+      color: var(--muted);
+      border-left: 3px solid var(--primary);
+      padding-left: 16px;
+      line-height: 1.6;
+    }
+
+    .passo-card {
+      background: rgba(20, 29, 47, 0.92);
+      border-radius: 22px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .passo-header {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .passo-numero {
+      background: var(--primary);
+      color: white;
+      width: 40px;
+      height: 40px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .passo-titulo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+
+    .badge-aviso {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.24);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fbd38d;
+      margin-left: auto;
+    }
+
+    .conteudo-passo {
+      padding: 22px;
+      background: transparent;
+    }
+
+    .instrucoes {
+      list-style: none;
+    }
+
+    .instrucoes li {
+      margin-bottom: 1rem;
+      padding-left: 1.8rem;
+      position: relative;
+      line-height: 1.55;
+      font-size: 0.96rem;
+      font-weight: 500;
+      color: #d7e3f7;
+    }
+
+    .instrucoes li strong {
+      color: #dbe8ff;
+      background: rgba(79, 140, 255, 0.14);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .instrucoes li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--success);
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .sub-item {
+      margin-left: 1.5rem;
+      margin-top: 0.7rem;
+      border-left: 2px dashed #41557f;
+      padding-left: 1.2rem;
+    }
+
+    .sub-item li:before {
+      content: "➤";
+      color: var(--warning);
+      font-size: 0.9rem;
+    }
+
+    .caixa-dados {
+      background: #0d1526;
+      border-radius: 16px;
+      padding: 1rem 1.3rem;
+      margin: 1rem 0;
+      font-family: monospace;
+      font-size: 0.9rem;
+      border: 1px solid var(--border);
+      color: #d7e3f7;
+      line-height: 1.7;
+    }
+
+    .aviso-especial {
+      background: rgba(245, 158, 11, 0.12);
+      border-left: 6px solid var(--warning);
+      padding: 1rem 1.2rem;
+      border-radius: 16px;
+      margin: 1rem 0;
+      font-weight: 500;
+      color: #fde7b0;
+      line-height: 1.55;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-top: 1rem;
+    }
+
+    .card-info {
+      background: rgba(255,255,255,0.02);
+      border-radius: 18px;
+      padding: 1rem 1.1rem;
+      border: 1px solid var(--border);
+      color: #dbe5f7;
+      line-height: 1.6;
+    }
+
+    .card-info h3 {
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: #edf3ff;
+    }
+
+    hr {
+      margin: 1.2rem 0;
+      border: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      background: rgba(20, 29, 47, 0.92);
+      padding: 1rem 1.2rem;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+
+    .mobile-checklist-toggle {
+      display: none;
+    }
+
+    @media (max-width: 1200px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        max-height: none;
+        order: -1;
+      }
+    }
+
+    @media (max-width: 780px) {
+      .grid-2col {
+        grid-template-columns: 1fr;
+      }
+
+      .passo-titulo {
+        font-size: 1.08rem;
+      }
+
+      .conteudo-passo,
+      .header {
+        padding: 18px;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .sidebar-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <main class="main-content">
+      <div class="container">
+        <div class="header">
+          <h1>
+            📋 Procedimentos Operacionais
+            <span>Nova Loja · Colaborador</span>
+          </h1>
+          <p>
+            ✅ Cadastro de loja e colaborador · Fluxo completo<br>
+            Siga a ordem estabelecida. Não pule etapas.
+          </p>
+        </div>
+
+        <div class="passo-card" id="parte1">
+          <div class="passo-header">
+            <div class="passo-numero">1</div>
+            <div class="passo-titulo">📦 1ª PARTE · CADASTRO INICIAL (antes da fachada)</div>
+            <div class="badge-aviso">⚠️ REALIZAR ANTES DA FACHADA</div>
+          </div>
+          <div class="conteudo-passo">
+            <ul class="instrucoes">
+              <li><strong>1.1</strong> Fazer cópia da lista de associados e inserir dados da loja nova. <span style="background: rgba(245, 158, 11, 0.12); padding: 2px 8px; border-radius: 999px; color: #fde7b0;">(Se for desligamento: mover para aba "desligadas")</span></li>
+              <li><strong>1.2</strong> Criar conta domínio <strong>vidafarmacias.com.br</strong> no Painel Redehost → <a href="https://painel.redehost.com.br/Login.aspx" target="_blank">https://painel.redehost.com.br</a></li>
+              <li><strong>1.3</strong> Cadastrar loja no <strong>Medicon</strong> (Login: 23 / Senha: 573648)
+                <div class="sub-item">
+                  <ul class="instrucoes">
+                    <li>📌 Aba Dados: preencher até "tipo de cliente"</li>
+                    <li>📌 Aba Condições: Cond Pgto: 02 30 dias | Forma pgto: REFAR 11 Sicredi + COOFARSUL 11 Sicredi | Limite R$5.000</li>
+                    <li>📌 Aba Adicionais: E-mail, E-mail NFe, Contato, Fone, Transportadora</li>
+                    <li>📌 Aba Vendedores: adicionar vendedor 1 → GRAVAR TUDO</li>
+                  </ul>
+                </div>
+              </li>
+              <li><strong>1.4</strong> Cadastrar na <strong>Intranet</strong> → <a href="http://intranet.vidafarmacias.com.br/_admin/" target="_blank">http://intranet.vidafarmacias.com.br/_admin/</a> (Login: vida / Senha: Vida#123) <br>⚠️ <strong>REALIZAR APÓS RECEBER DOCUMENTOS</strong> → O Anjo avisará (Anjos &gt; ARQ.LOJA NOVA &gt; PROCESSO DE ENTRADA).</li>
+              <li><strong>1.5</strong> Cadastrar no <strong>Orion (FEBRAFAR)</strong> → <a href="https://orionfebrafar.com.br/" target="_blank">https://orionfebrafar.com.br/</a> <br>Se for anjo novo: acessar PAI e dar permissão GRUPO ANJO.</li>
+              <li><strong>1.6</strong> Cadastrar loja no <strong>Portal de Compras (Gruppy)</strong> → AVISAR COMERCIAL!
+                <div class="sub-item">
+                  <ul class="instrucoes">
+                    <li>7.1 Cadastros Básicos &gt; Básicos &gt; Grupo Lojas</li>
+                    <li>7.2 Cadastros Básicos &gt; Básicos &gt; Lojas &gt; Nova loja (preencher tudo)</li>
+                    <li>7.3 Cadastros Básicos &gt; Básicos &gt; Usuários &gt; Novo usuário: Razão Social, email, Login = CNPJ números, CNPJ números, Tipo = Grupo de Loja ou Loja única</li>
+                  </ul>
+                </div>
+              </li>
+              <li><strong>1.7</strong> Cadastrar loja no <strong>Web Compras</strong> → solicitar adesão compra centralizada? AVISAR COMERCIAL e deixar BLOQUEADO a compra.</li>
+              <li><strong>1.8</strong> 🏆 PRODUZIR CERTIFICADO DE ASSOCIADO (se alterar razão social, novo certificado). Local: Compartilhados\\CONNECT\\Certificados. Enviar para Recepção (loja precisa inaugurar com ele).</li>
+              <li><strong>1.9</strong> Solicitar o <strong>CERTIFICADO DIGITAL DA LOJA</strong> (obrigatório para ACODE MONITOR).</li>
+              <li><strong>1.10</strong> ADICIONAR LOJA NO MYMAPS → <a href="https://google.com/maps/d/edit?mid=1GYJhvgk018la0RSCKK1nSDA8ZRWGYyo&ll=1.4233759883575878%2C-38.13506484999999&z=3" target="_blank">Clique aqui (mapa colaborativo)</a></li>
+              <li><strong>📧</strong> DISPARAR LISTA POR EMAIL → avisar equipe que loja entrou na 1ª fase.</li>
+            </ul>
+            <div class="aviso-especial">
+              📌 <strong>ATENÇÃO:</strong> Não prossiga para 2ª parte antes da loja ter <strong>FACHADA + SISTEMA TRIER</strong>.
+            </div>
+          </div>
+        </div>
+
+        <div class="passo-card" id="parte2">
+          <div class="passo-header">
+            <div class="passo-numero">2</div>
+            <div class="passo-titulo">🏬 2ª PARTE · APÓS FACHADA + SISTEMA TRIER</div>
+            <div class="badge-aviso">🔔 ETAPA OBRIGATÓRIA FINAL</div>
+          </div>
+          <div class="conteudo-passo">
+            <ul class="instrucoes">
+              <li><strong>12</strong> CADASTRAR NO LINX CONECTA (informar inclusão para Financeiro)
+                <div class="sub-item">
+                  <ul class="instrucoes">
+                    <li>🔹 Se for <strong>DESLIGAMENTO</strong> de loja: 12.1.1 inativar no Analysis / 12.1.2 inativar LINX Conecta / 12.1.3 inativar Cadastro Febrafar / 12.1.4 informar Financeiro e Trier.</li>
+                    <li>🔹 Após incluir loja nova: vincular promoções PEC Medicamento e Perfumaria.</li>
+                    <li>🔹 Trocar senha de acesso do <strong>Web Estabelecimentos</strong> → <a href="https://redevida.bigconecta.com.br/estabelecimentos/estlogin.aspx" target="_blank">Acesse aqui</a></li>
+                    <li>🔹 Se loja usar EDM: solicitar contrato LINX via MOVIDESK da Febrafar (preencher planilha e enviar ticket).</li>
+                  </ul>
+                </div>
+              </li>
+              <li><strong>13</strong> CADASTRAR LOJA NO APLICATIVO (E-DELIVERY) → <a href="https://admin-edelivery.febrafar.com.br/" target="_blank">https://admin-edelivery.febrafar.com.br/</a></li>
+              <li><strong>14</strong> CADASTRAR NO SITE DA VIDA FARMÁCIAS → <a href="https://vidafarmacias.com.br/admin/" target="_blank">https://vidafarmacias.com.br/admin/</a></li>
+              <li><strong>15</strong> INCLUIR LOJA NO GOOGLE MAPS (criar ficha ou reivindicar)</li>
+              <li><strong>16</strong> INCLUSÃO NOS GRUPOS DE WHATSAPP:
+                <div class="caixa-dados">
+                  📱 Grupos obrigatórios:<br>
+                  • Vida Oficial (com mensagem de bem-vindo)<br>
+                  • Dúvidas e Receitas<br>
+                  • Web Compras<br>
+                  • Comercial Vida Farmácias<br>
+                  • Marketing Vida Farmácias<br>
+                  • Farmácia Popular
+                </div>
+              </li>
+              <li><strong>17</strong> POSTAR SAUDAÇÃO NO <strong>VIDA OFICIAL</strong> após a inclusão 🎉</li>
+              <li><strong>18</strong> Se for <strong>DESLIGAMENTO</strong>: mover a pasta da loja para a pasta "DESLIGADAS" (pasta compartilhada Associados Vida).</li>
+            </ul>
+            <hr>
+            <div class="grid-2col">
+              <div class="card-info">
+                <h3>💳 CARTÃO PADRÃO</h3>
+                <p>Número: <strong>10054515113</strong><br>CPF vinculado: <strong>317.316.741-47</strong></p>
+              </div>
+              <div class="card-info">
+                <h3>📧 WEBMAIL</h3>
+                <p>Login: <strong>o domínio da loja</strong><br>Senha: <strong>#Vida_357</strong><br>Acesso: <a href="https://webmail.redehost.com.br/" target="_blank">webmail.redehost.com.br</a></p>
+              </div>
+              <div class="card-info">
+                <h3>🌐 INTRANET</h3>
+                <p>Login: <strong>a definir</strong><br>Senha: <strong>#Vida_357</strong><br><a href="https://intranet.vidafarmacias.com.br/" target="_blank">intranet.vidafarmacias.com.br</a></p>
+              </div>
+              <div class="card-info">
+                <h3>🪐 ORION (FEBRAFAR)</h3>
+                <p>Login: <strong>e-mail cadastrado</strong><br>Senha: link enviado por email (expira em 7 dias!)</p>
+              </div>
+              <div class="card-info">
+                <h3>🛒 PORTAL DE COMPRAS</h3>
+                <p>Login: <strong>CNPJ números</strong><br>Senha: link para cadastro enviado no e-mail.<br>Tutoriais: <a href="https://youtube.com/playlist?list=PLlHKRMzga1KxvwhtDbCgh0yOmi-KZ0QBZ" target="_blank">Youtube Playlist</a></p>
+              </div>
+              <div class="card-info">
+                <h3>📦 WEBCOMPRAS</h3>
+                <p>Acesso: <a href="http://webcompras.febrafar.com.br/pdvlinkplus/sistema/Home/Index" target="_blank">http://webcompras.febrafar.com.br</a><br>Login/Senha: cadastrar internamente.</p>
+              </div>
+              <div class="card-info">
+                <h3>🔢 CÓDIGO PEC + ANÁLISE</h3>
+                <p>Código PEC: <strong>fornecido pela Trier</strong><br>Senha do Analysis: <strong>A TRIER precisa desse código para conectar PEC/TRIER</strong></p>
+              </div>
+              <div class="card-info">
+                <h3>📱 E-DELIVERY</h3>
+                <p>Login: e-mail da loja<br>Senha: link enviado por email (expira em 5 dias!)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="passo-card" id="colaborador">
+          <div class="passo-header">
+            <div class="passo-numero">👤</div>
+            <div class="passo-titulo">🤝 ENTRADA DE NOVO COLABORADOR (ANJO / FUNCIONÁRIO)</div>
+            <div class="badge-aviso">⭐ fluxo rápido</div>
+          </div>
+          <div class="conteudo-passo">
+            <ul class="instrucoes">
+              <li><strong>1.</strong> Coletar documentos (RG, CPF, comprovante de residência, contrato assinado).</li>
+              <li><strong>2.</strong> Acessar <strong>Intranet</strong> e criar usuário para o colaborador com perfil correto (Anjo, Comercial, etc).</li>
+              <li><strong>3.</strong> Se for <strong>Anjo</strong>: no Orion (Febrafar), acessar o PAI e dar permissão ao GRUPO ANJO.</li>
+              <li><strong>4.</strong> Criar e-mail institucional no Redehost (se necessário). Padrão: nome@vidafarmacias.com.br</li>
+              <li><strong>5.</strong> Adicionar aos grupos de WhatsApp pertinentes à função (Comercial, Dúvidas, etc).</li>
+              <li><strong>6.</strong> Incluir no controle de acesso do Portal de Compras e Web Compras (se for comprador).</li>
+              <li><strong>7.</strong> Enviar mensagem de boas-vindas no grupo Vida Oficial e apresentar para equipe.</li>
+            </ul>
+            <div class="aviso-especial">
+              💡 <strong>Recomendação:</strong> solicite confirmação do "ANJO responsável" antes de liberar cadastros críticos. Utilize o checklist.
+            </div>
+          </div>
+        </div>
+
+        <div class="passo-card" id="acessos">
+          <div class="passo-header">
+            <div class="passo-numero">🔑</div>
+            <div class="passo-titulo">SENHAS E ACESSOS RECORRENTES (consulta rápida)</div>
+            <div class="badge-aviso">📌 referência</div>
+          </div>
+          <div class="conteudo-passo">
+            <div class="grid-2col">
+              <div class="card-info"><strong>🔹 MEDICON</strong><br>Login: 23 / Senha: 573648</div>
+              <div class="card-info"><strong>🔹 INTRANET</strong><br>Login: vida / Senha: Vida#123</div>
+              <div class="card-info"><strong>🔹 REDEHOST</strong><br>Senha padrão domínio: #Vida_357</div>
+              <div class="card-info"><strong>🔹 WEBMAIL</strong><br>Senha: #Vida_357</div>
+              <div class="card-info"><strong>🔹 ORION</strong><br>Link de acesso enviado por e-mail (válido 7 dias)</div>
+              <div class="card-info"><strong>🔹 E-DELIVERY</strong><br>Link de confirmação (5 dias expira)</div>
+            </div>
+            <hr>
+            <p style="margin-top: 10px; color:#d7e3f7;"><strong>⚠️ CARTÃO PADRÃO GERAL:</strong> 10054515113 (CPF: 317.316.741-47) para testes.</p>
+          </div>
+        </div>
+
+        <footer>
+          📋 Manual de Procedimentos · Siga a ordem estabelecida. Em caso de dúvidas, consulte o ANJO responsável.
+        </footer>
+      </div>
+    </main>
+
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>✅ Checklist</h2>
+        <p>Marque as etapas concluídas. O progresso fica salvo neste navegador.</p>
+
+        <div class="progress-box">
+          <div class="progress-top">
+            <span>Progresso</span>
+            <strong id="progressCount">0/0</strong>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-text" id="progressText">Nenhuma tarefa concluída ainda.</div>
+        </div>
+
+        <div class="sidebar-actions">
+          <button id="markAllChecklist" class="btn btn-primary">Concluir tudo</button>
+          <button id="resetChecklist" class="btn btn-secondary">Resetar</button>
+        </div>
+      </div>
+
+      <div class="checklist-nav" id="checklistDinamico"></div>
+    </aside>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "checklistVidaProcedimentosV2";
+
+    const checklistItems = [
+      { id: "chk-1", text: "1. Cópia da lista de associados + inserir loja nova/desligada", anchor: "#parte1" },
+      { id: "chk-2", text: "2. Criar conta domínio Redehost", anchor: "#parte1" },
+      { id: "chk-3", text: "3. Cadastro no Medicon", anchor: "#parte1" },
+      { id: "chk-4", text: "4. Cadastro na Intranet", anchor: "#parte1" },
+      { id: "chk-5", text: "5. Cadastro Orion Febrafar", anchor: "#parte1" },
+      { id: "chk-6", text: "6. Cadastro Portal de Compras Gruppy", anchor: "#parte1" },
+      { id: "chk-7", text: "7. Cadastro Web Compras", anchor: "#parte1" },
+      { id: "chk-8", text: "8. Produzir certificado de associado", anchor: "#parte1" },
+      { id: "chk-9", text: "9. Solicitar certificado digital da loja", anchor: "#parte1" },
+      { id: "chk-10", text: "10. Adicionar loja no MyMaps + disparar lista por email", anchor: "#parte1" },
+      { id: "chk-11", text: "11. Aguardar fachada + sistema Trier", anchor: "#parte2" },
+      { id: "chk-12", text: "12. Cadastro Linx Conecta + promoções PEC", anchor: "#parte2" },
+      { id: "chk-13", text: "13. Cadastro E-Delivery", anchor: "#parte2" },
+      { id: "chk-14", text: "14. Cadastro no site Vida Farmácias", anchor: "#parte2" },
+      { id: "chk-15", text: "15. Incluir loja no Google Maps", anchor: "#parte2" },
+      { id: "chk-16", text: "16. Adicionar nos grupos de WhatsApp", anchor: "#parte2" },
+      { id: "chk-17", text: "17. Postar saudação no Vida Oficial", anchor: "#parte2" },
+      { id: "chk-18", text: "18. Se desligamento: mover pasta para DESLIGADAS", anchor: "#parte2" },
+      { id: "chk-19", text: "19. Novo colaborador: documentos, e-mail, grupos e permissões", anchor: "#colaborador" },
+      { id: "chk-20", text: "20. Conferir acessos recorrentes e senhas", anchor: "#acessos" }
+    ];
+
+    function getChecklistState() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) {
+        return Object.fromEntries(checklistItems.map(item => [item.id, false]));
+      }
+
+      try {
+        const parsed = JSON.parse(saved);
+        const base = Object.fromEntries(checklistItems.map(item => [item.id, false]));
+        return { ...base, ...parsed };
+      } catch {
+        return Object.fromEntries(checklistItems.map(item => [item.id, false]));
+      }
+    }
+
+    function saveChecklistState(state) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function renderChecklist() {
+      const container = document.getElementById("checklistDinamico");
+      const state = getChecklistState();
+
+      container.innerHTML = checklistItems.map(item => {
+        const checked = !!state[item.id];
+        return `
+          <label class="check-item ${checked ? "done" : ""}">
+            <input type="checkbox" data-id="${item.id}" ${checked ? "checked" : ""}>
+            <div class="check-item-content">
+              <a href="${item.anchor}">${item.text}</a>
+              <div class="check-status">${checked ? "Concluído" : "Pendente"}</div>
+            </div>
+          </label>
+        `;
+      }).join("");
+
+      bindChecklistEvents();
+      updateChecklistProgress();
+    }
+
+    function bindChecklistEvents() {
+      const checkboxes = document.querySelectorAll('#checklistDinamico input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener("change", (event) => {
+          const state = getChecklistState();
+          state[event.target.dataset.id] = event.target.checked;
+          saveChecklistState(state);
+          renderChecklist();
+        });
+      });
+    }
+
+    function updateChecklistProgress() {
+      const state = getChecklistState();
+      const total = checklistItems.length;
+      const done = checklistItems.filter(item => state[item.id]).length;
+      const percent = total ? (done / total) * 100 : 0;
+
+      document.getElementById("progressCount").textContent = `${done}/${total}`;
+      document.getElementById("progressFill").style.width = `${percent}%`;
+
+      let text = "Nenhuma tarefa concluída ainda.";
+      if (done > 0 && done < total) {
+        text = `${percent.toFixed(0)}% do checklist concluído.`;
+      }
+      if (done === total) {
+        text = "Checklist concluído com sucesso.";
+      }
+
+      document.getElementById("progressText").textContent = text;
+    }
+
+    document.getElementById("resetChecklist").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      renderChecklist();
+    });
+
+    document.getElementById("markAllChecklist").addEventListener("click", () => {
+      const fullState = Object.fromEntries(checklistItems.map(item => [item.id, true]));
+      saveChecklistState(fullState);
+      renderChecklist();
+    });
+
+    renderChecklist();
+  </script>
+</body>
+</html>
