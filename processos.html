@@ -449,39 +449,19 @@
   <script>
     // Base de dados de processos
     const processosData = [
-      {
-        id: 1,
-        codigo: "POP-001",
-        nome: "Cadastro de Associados",
-        categoria: "Operacional",
-        responsavel: "Carlos Mendes",
-        versao: "2.3",
-        status: "active",
-        dataAtualizacao: "2024-02-15",
-        descricao: "Procedimento para cadastro de novos associados na plataforma"
-      },
-      {
-        id: 2,
-        codigo: "POP-002",
-        nome: "Validação de Documentos",
-        categoria: "Operacional",
-        responsavel: "Ana Paula Silva",
-        versao: "1.8",
-        status: "active",
-        dataAtualizacao: "2024-01-20",
-        descricao: "Fluxo de validação de documentos de associados"
-      },
-      {
-        id: 3,
-        codigo: "FIN-001",
-        nome: "Controle de Pagamentos",
-        categoria: "Financeiro",
-        responsavel: "Roberto Alves",
-        versao: "3.0",
-        status: "active",
-        dataAtualizacao: "2024-03-01",
-        descricao: "Processo de controle de pagamentos e conciliação bancária"
-      }
+        {
+            id: 1,
+            codigo: "POP-001",
+            nome: "Cadastro de Associados",
+            categoria: "Operacional",
+            responsavel: "Bryan Lamanna",
+            versao: "1.0",
+            status: "active",
+            dataAtualizacao: "2024-04-15",
+            descricao: "Procedimento para cadastro de novos associados",
+            link: "train_cadastro.html" // Link adicionado
+        }
+      
     ];
 
     let filteredProcessos = [...processosData];
@@ -593,11 +573,17 @@
     }
 
     function viewProcesso(id) {
-      const processo = processosData.find(p => p.id === id);
-      if (processo) {
-        alert(`Processo: ${processo.codigo} - ${processo.nome}\nResponsável: ${processo.responsavel}\nVersão: ${processo.versao}\nStatus: ${getStatusBadge(processo.status).replace(/<[^>]*>/g, '')}\nÚltima atualização: ${formatDate(processo.dataAtualizacao)}\n\nDescrição:\n${processo.descricao}`);
-      }
-    }
+        const processo = processosData.find(p => p.id === id);
+        if (processo) {
+            if (processo.link) {
+            // Abre o link em uma nova aba
+            window.open(processo.link, '_blank');
+            } else {
+            // Fallback: se não tiver link, mostra o alert com informações
+            alert(`Processo: ${processo.codigo} - ${processo.nome}\nResponsável: ${processo.responsavel}\nVersão: ${processo.versao}\nStatus: ${getStatusBadge(processo.status).replace(/<[^>]*>/g, '')}\nÚltima atualização: ${formatDate(processo.dataAtualizacao)}\n\nDescrição:\n${processo.descricao}\n\nNenhum link disponível para este processo.`);
+            }
+        }
+        }
 
     function escapeHtml(str) {
       if (!str) return "";
