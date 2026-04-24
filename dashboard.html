@@ -469,7 +469,8 @@
 
     <header class="topbar">
       <div>
-        <span class="badge">Vida Farmácias</span>
+        <img src="assets/logo vida branco horizontal.png" style="width: 300px;" alt="">
+
         <h1>Dashboard de Associados</h1>
         <p class="subtitle">
           Visão analítica da base de associados, com filtros, indicadores operacionais e exportação em JSON com base na visão atual ou no consolidado geral.
@@ -628,7 +629,7 @@
       setTableLoading("Carregando dados...");
 
       try {
-        const response = await fetch(`${FIREBASE_BASE_URL}/.json`);
+        const response = await fetch(`${FIREBASE_BASE_URL}/associados.json`);
         if (!response.ok) throw new Error("Erro ao buscar registros");
 
         const data = await response.json();

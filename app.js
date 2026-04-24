@@ -1,4 +1,4 @@
- const FIREBASE_BASE_URL = "https://certificado-7974e-default-rtdb.firebaseio.com";
+const FIREBASE_BASE_URL = "https://certificado-7974e-default-rtdb.firebaseio.com";
 
 const state = {
   records: [],
@@ -92,7 +92,6 @@ const FORM_SECTIONS = [
       { key: "Associado_REFAR", label: "Associado REFAR", type: "text", col: 3 },
       { key: "Associado_COOFARSUL", label: "Associado COOFARSUL", type: "text", col: 3 },
       { key: "TERMO_IMAGEM_ASSINADO?", label: "Termo de Imagem Assinado", type: "text", col: 3 },
-
       { key: "RAZÃO_MATRIZ", label: "Razão Matriz", type: "text", col: 6 },
       { key: "DOCUMENTAÇÃO", label: "Documentação", type: "text", col: 6 },
 
@@ -140,7 +139,7 @@ const detailsFields = [
   "GC",
   "PBM",
   "INTEG_BC_TRIER?",
-  "GCP TRIER",
+  "GCP_TRIER",
   "MIP",
   "Farmácia_Popular",
   "SMARTPED",
@@ -173,7 +172,7 @@ async function loadRecords() {
   setTableLoading("Carregando registros...");
 
   try {
-    const response = await fetch(`${FIREBASE_BASE_URL}/.json`);
+    const response = await fetch(`${FIREBASE_BASE_URL}/associados.json`);
     if (!response.ok) throw new Error("Erro ao buscar registros");
 
     const data = await response.json();
@@ -360,7 +359,7 @@ function updateStats() {
 function setTableLoading(message) {
   document.getElementById("tableBody").innerHTML = `
     <tr>
-      <td colspan="7" class="empty-state">${message}</td>
+      <td colspan="7" class="empty-state">${message}<tr>
     </tr>
   `;
 }
@@ -445,15 +444,145 @@ function openDeleteModal(id) {
   openModal("confirmModal");
 }
 
+// ==================== FUNÇÕES DE HISTÓRICO ====================
+
+async function registrarHistorico(tipo, dados) {
+  try {
+    const timestamp = new Date().toISOString();
+    const historicoId = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const registroHistorico = {
+      id: historicoId,
+      tipo: tipo, // 'CREATE', 'UPDATE', 'DELETE'
+      dados: dados,
+      data: timestamp,
+      usuario: getUsuarioAtual() // Você pode implementar essa função para pegar o usuário logado
+    };
+    
+    const response = await fetch(`${FIREBASE_BASE_URL}/historico/${historicoId}.json`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(registroHistorico),
+    });
+    
+    if (!response.ok) throw new Error("Erro ao registrar histórico");
+    
+    console.log("Histórico registrado:", tipo, dados);
+  } catch (error) {
+    console.error("Erro ao registrar histórico:", error);
+    // Não interrompe a operação principal se o histórico falhar
+  }
+}
+
+function getUsuarioAtual() {
+  // Tenta pegar o usuário do localStorage (se estiver usando autenticação)
+  try {
+    const usuarioStorage = localStorage.getItem("usuario");
+    if (usuarioStorage) {
+      const usuario = JSON.parse(usuarioStorage);
+      return {
+        id: usuario.id || usuario.email,
+        nome: usuario.nome || usuario.email,
+        email: usuario.email
+      };
+    }
+  } catch (e) {
+    console.error("Erro ao obter usuário:", e);
+  }
+  
+  // Fallback: usuário anônimo ou IP
+  return {
+    id: "anonymous",
+    nome: "Usuário Anônimo",
+    email: "desconhecido"
+  };
+}
+
+function compararObjetos(objAntigo, objNovo) {
+  const alteracoes = [];
+  
+  // Função para normalizar valores para comparação
+  function normalizeValue(value) {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "object") return JSON.stringify(value);
+    return String(value).trim();
+  }
+  
+  // Pega todas as chaves únicas dos dois objetos
+  const todasChaves = new Set([
+    ...Object.keys(objAntigo || {}),
+    ...Object.keys(objNovo || {})
+  ]);
+  
+  for (const chave of todasChaves) {
+    // Ignora o campo MATRIZ especial se ele existir nas comparações
+    if (chave === "MATRIZ " || chave === "MATRIZ") continue;
+    if (chave === "MATRIZ_FILIAL") {
+      const valorAntigo = normalizeValue(objAntigo?.["MATRIZ "]?.[" FILIAL"] || objAntigo?.[chave] || "");
+      const valorNovo = normalizeValue(objNovo?.["MATRIZ "]?.[" FILIAL"] || objNovo?.[chave] || "");
+      
+      if (valorAntigo !== valorNovo) {
+        alteracoes.push({
+          campo: "MATRIZ_FILIAL",
+          rotulo: "Matriz/Filial",
+          valor_antigo: valorAntigo || "(vazio)",
+          valor_novo: valorNovo || "(vazio)"
+        });
+      }
+      continue;
+    }
+    
+    const valorAntigo = normalizeValue(objAntigo?.[chave]);
+    const valorNovo = normalizeValue(objNovo?.[chave]);
+    
+    if (valorAntigo !== valorNovo) {
+      // Encontra o rótulo amigável do campo
+      let rotulo = chave;
+      for (const section of FORM_SECTIONS) {
+        const field = section.fields.find(f => f.key === chave);
+        if (field) {
+          rotulo = field.label;
+          break;
+        }
+      }
+      
+      alteracoes.push({
+        campo: chave,
+        rotulo: rotulo,
+        valor_antigo: valorAntigo || "(vazio)",
+        valor_novo: valorNovo || "(vazio)"
+      });
+    }
+  }
+  
+  return alteracoes;
+}
+
 async function confirmDelete() {
   if (!state.deletingId) return;
 
   try {
-    const response = await fetch(`${FIREBASE_BASE_URL}/${state.deletingId}.json`, {
+    // Buscar o registro antes de excluir para o histórico
+    const recordToDelete = state.records.find((item) => item.id === state.deletingId);
+    
+    const response = await fetch(`${FIREBASE_BASE_URL}/associados/${state.deletingId}.json`, {
       method: "DELETE",
     });
 
     if (!response.ok) throw new Error("Erro ao excluir");
+
+    // Registrar exclusão no histórico
+    if (recordToDelete) {
+      await registrarHistorico("DELETE", {
+        id: state.deletingId,
+        nome_fantasia: recordToDelete["NOME_FANTASIA"],
+        razao_social: recordToDelete["RAZÃO_SOCIAL"],
+        dados_completos: recordToDelete,
+        motivo: "Exclusão de registro"
+      });
+    }
 
     closeModal("confirmModal");
     showToast("Registro excluído com sucesso.", "success");
@@ -549,11 +678,43 @@ async function handleFormSubmit(event) {
 
   try {
     if (state.editingId) {
-      await updateRecord(state.editingId, payload);
-      showToast("Registro atualizado com sucesso.", "success");
+      // Buscar o registro antigo antes da atualização
+      const oldRecord = state.records.find((item) => item.id === state.editingId);
+      
+      // Comparar e registrar alterações
+      const alteracoes = compararObjetos(oldRecord, payload);
+      
+      if (alteracoes.length > 0) {
+        await updateRecord(state.editingId, payload);
+        
+        // Registrar atualização no histórico
+        await registrarHistorico("UPDATE", {
+          id: state.editingId,
+          nome_fantasia: payload["NOME_FANTASIA"] || oldRecord?.["NOME_FANTASIA"],
+          razao_social: payload["RAZÃO_SOCIAL"] || oldRecord?.["RAZÃO_SOCIAL"],
+          alteracoes: alteracoes,
+          dados_anteriores: oldRecord,
+          dados_novos: payload
+        });
+        
+        showToast("Registro atualizado com sucesso.", "success");
+      } else {
+        showToast("Nenhuma alteração detectada.", "info");
+        closeModal("formModal");
+        return;
+      }
     } else {
       const newId = await getNextId();
       await createRecord(newId, payload);
+      
+      // Registrar criação no histórico
+      await registrarHistorico("CREATE", {
+        id: newId,
+        nome_fantasia: payload["NOME_FANTASIA"],
+        razao_social: payload["RAZÃO_SOCIAL"],
+        dados_completos: payload
+      });
+      
       showToast("Registro criado com sucesso.", "success");
     }
 
@@ -580,7 +741,7 @@ function mapFormToFirebasePayload(data) {
 
     if (key === "MATRIZ_FILIAL") return;
 
-    if (key === "CAT REDE" || key === "CÓDIGO MEDICON" || key === "DDD") {
+    if (key === "CAT_REDE" || key === "CÓDIGO_MEDICON" || key === "DDD") {
       payload[key] = cleanedValue === "" ? "" : Number(cleanedValue);
       return;
     }
@@ -596,7 +757,7 @@ function mapFormToFirebasePayload(data) {
 }
 
 async function getNextId() {
-  const response = await fetch(`${FIREBASE_BASE_URL}/.json`);
+  const response = await fetch(`${FIREBASE_BASE_URL}/associados.json`);
   if (!response.ok) throw new Error("Erro ao gerar novo ID");
 
   const data = await response.json();
@@ -607,7 +768,7 @@ async function getNextId() {
 }
 
 async function createRecord(id, payload) {
-  const response = await fetch(`${FIREBASE_BASE_URL}/${id}.json`, {
+  const response = await fetch(`${FIREBASE_BASE_URL}/associados/${id}.json`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -619,8 +780,8 @@ async function createRecord(id, payload) {
 }
 
 async function updateRecord(id, payload) {
-    console.log(payload)
-  const response = await fetch(`${FIREBASE_BASE_URL}/${id}.json`, {
+  console.log(payload);
+  const response = await fetch(`${FIREBASE_BASE_URL}/associados/${id}.json`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -647,6 +808,12 @@ function showToast(message, type = "success") {
   const toast = document.getElementById("toast");
   toast.textContent = message;
   toast.className = `toast ${type}`;
+  
+  // Suporte para tipo "info"
+  if (type === "info") {
+    toast.style.background = "#3b82f6";
+    toast.style.borderLeftColor = "#60a5fa";
+  }
 
   setTimeout(() => {
     toast.classList.add("hidden");
@@ -688,9 +855,11 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // toggle
-toggleBtn.addEventListener("click", () => {
-  sidebar.classList.toggle("collapsed");
-
-  const isCollapsed = sidebar.classList.contains("collapsed");
-  localStorage.setItem("sidebar-collapsed", isCollapsed);
-});
+if (toggleBtn) {
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("collapsed");
+  
+    const isCollapsed = sidebar.classList.contains("collapsed");
+    localStorage.setItem("sidebar-collapsed", isCollapsed);
+  });
+}

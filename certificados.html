@@ -665,7 +665,8 @@
 
     <header class="topbar">
       <div>
-        <span class="badge">Vida Farmácias</span>
+        <img src="assets/logo vida branco horizontal.png" style="width: 300px;" alt="">
+
         <h1>Monitoramento de Relatórios e Certificados</h1>
         <p class="subtitle">
           Controle das datas de relatório e certificado dos associados, com alertas automáticos por vencimento, indicadores de acompanhamento e edição direta via modal.
@@ -930,7 +931,7 @@
       setTableLoading("Carregando registros...");
 
       try {
-        const response = await fetch(`${FIREBASE_BASE_URL}/.json`);
+        const response = await fetch(`${FIREBASE_BASE_URL}/associados.json`);
         if (!response.ok) throw new Error("Erro ao buscar registros");
 
         const data = await response.json();
@@ -1283,7 +1284,7 @@
     }
 
     async function updateRecord(id, payload) {
-      const response = await fetch(`${FIREBASE_BASE_URL}/${id}.json`, {
+      const response = await fetch(`${FIREBASE_BASE_URL}/associados/${id}.json`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

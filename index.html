@@ -4,195 +4,829 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=0.9" />
   <title>Gerenciador de Associados - Vida Farmácias</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Estilos adicionais para o modal de histórico */
+    .stats-section {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .stats {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex: 1;
+    }
+
+    .history-btn {
+      background: linear-gradient(135deg, #4f8cff, #3a6ee0);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 14px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+    }
+
+    .history-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 140, 255, 0.3);
+    }
+
+    /* Modal de histórico */
+    .modal-history {
+      max-width: 900px;
+      width: 90%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .history-filters {
+      padding: 16px 20px;
+      background: #0d1526;
+      border-bottom: 1px solid #2a3554;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .history-filters select, 
+    .history-filters input {
+      background: #1a2540;
+      border: 1px solid #2a3554;
+      border-radius: 10px;
+      padding: 8px 14px;
+      color: #e5edf9;
+      font-size: 13px;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .history-filters select:focus,
+    .history-filters input:focus {
+      outline: none;
+      border-color: #4f8cff;
+    }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .history-item {
+      background: #111827;
+      border: 1px solid #2a3554;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .history-item:hover {
+      border-color: #4f8cff;
+      transform: translateX(4px);
+    }
+
+    .history-item-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .history-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .history-badge.create {
+      background: rgba(34, 197, 94, 0.15);
+      color: #a7f3c0;
+    }
+
+    .history-badge.update {
+      background: rgba(79, 140, 255, 0.15);
+      color: #b8d1ff;
+    }
+
+    .history-badge.delete {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fecaca;
+    }
+
+    .history-associate {
+      font-weight: 600;
+      font-size: 14px;
+      color: #e5edf9;
+    }
+
+    .history-date {
+      margin-left: auto;
+      font-size: 11px;
+      color: #6b7aa1;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .history-user {
+      font-size: 12px;
+      color: #98a6c7;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2a3554;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .history-changes {
+      background: #0d1526;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 8px;
+    }
+
+    .history-change-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      font-size: 12px;
+      border-bottom: 1px solid #2a3554;
+      flex-wrap: wrap;
+    }
+
+    .history-change-row:last-child {
+      border-bottom: none;
+    }
+
+    .history-change-field {
+      min-width: 130px;
+      font-weight: 600;
+      color: #4f8cff;
+    }
+
+    .history-change-old {
+      color: #ef4444;
+      text-decoration: line-through;
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .history-change-new {
+      color: #22c55e;
+      font-weight: 500;
+      flex: 1;
+      word-break: break-word;
+    }
+
+    .history-arrow {
+      color: #6b7aa1;
+      font-size: 12px;
+    }
+
+    .history-full-data {
+      margin-top: 12px;
+    }
+
+    .history-full-data summary {
+      cursor: pointer;
+      font-size: 11px;
+      color: #6b7aa1;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .history-full-data summary:hover {
+      color: #4f8cff;
+    }
+
+    .history-full-data pre {
+      background: #0d1526;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 10px;
+      overflow-x: auto;
+      margin-top: 8px;
+      font-family: monospace;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .history-empty {
+      text-align: center;
+      padding: 40px;
+      color: #6b7aa1;
+    }
+
+    .history-loading {
+      text-align: center;
+      padding: 40px;
+      color: #6b7aa1;
+    }
+
+    .history-loading i {
+      font-size: 32px;
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    /* Scrollbar */
+    .history-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .history-list::-webkit-scrollbar-track {
+      background: #0d1526;
+      border-radius: 3px;
+    }
+
+    .history-list::-webkit-scrollbar-thumb {
+      background: #2a3554;
+      border-radius: 3px;
+    }
+
+    .history-list::-webkit-scrollbar-thumb:hover {
+      background: #4f8cff;
+    }
+  </style>
 </head>
 <body>
 
-
-  <div class="app">
-
-    <div class="layout">
+<div class="app">
+  <div class="layout">
   
-  <!-- SIDEBAR -->
-  <aside id="sidebar" class="sidebar collapsed">
-    <div class="sidebar-header">
-      <button id="toggleSidebar" class="toggle-btn">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-
-    <nav class="sidebar-menu">
-      <a href="index.html" class="menu-item">
-        <i class="fas fa-users"></i>
-        <span>Associados</span>
-      </a>
-
-      <a href="dashboard.html" class="menu-item">
-        <i class="fas fa-chart-line"></i>
-        <span>Dashboard</span>
-      </a>
-
-   <a href="certificados.html" class="menu-item">
-        <i class="fas fa-file"></i>
-        <span>Relatórios</span>
-      </a>
-
-      <a href="processos.html" class="menu-item">
-        <i class="fa-regular fa-calendar-check"></i>
-        <span>Processos</span>
-      </a>
-      
-    </nav>
-  </aside>
-
-  <!-- CONTEÚDO -->
-  <div id="mainContent" class="main-content">
-    <!-- SEU CONTEÚDO EXISTENTE FICA AQUI -->
-
-    
-
-    <header class="topbar">
-      <div>
-        <span class="badge">Vida Farmácias</span>
-        <h1>Gerenciamento de Associados</h1>
-        <p class="subtitle">
-          Cadastro, consulta e manutenção dos associados em tempo real.
-        </p>
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar collapsed">
+      <div class="sidebar-header">
+        <button id="toggleSidebar" class="toggle-btn">
+          <i class="fas fa-bars"></i>
+        </button>
       </div>
 
-      <button id="btnNovo" class="btn btn-primary">+ Novo associado</button>
-    </header>
+      <nav class="sidebar-menu">
+        <a href="index.html" class="menu-item">
+          <i class="fas fa-users"></i>
+          <span>Associados</span>
+        </a>
 
-    <section class="panel filters">
-      <div class="input-group">
-        <label for="searchInput">Buscar associado</label>
-        <input
-          type="text"
-          id="searchInput"
-          placeholder="Busque por nome, razão social, município, anjo, CNPJ..."
-        />
-      </div>
+        <a href="dashboard.html" class="menu-item">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
 
-      <div class="stats">
-        <div class="stat-card">
-          <span class="stat-label">Total</span>
-          <strong id="totalRecords">0</strong>
-        </div>
-      </div>
-    </section>
+        <a href="certificados.html" class="menu-item">
+          <i class="fas fa-file"></i>
+          <span>Relatórios</span>
+        </a>
 
-    <section class="panel table-panel">
-      <div class="table-header">
-        <h2>Lista de associados</h2>
-        <button id="btnReload" class="btn btn-secondary">Atualizar</button>
-      </div>
+        <a href="processos.html" class="menu-item">
+          <i class="fa-regular fa-calendar-check"></i>
+          <span>Processos</span>
+        </a>
+      </nav>
+    </aside>
 
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome Fantasia</th>
-              <th>Razão Social</th>
-              <th>Município / UF</th>
-              <th>Anjo</th>
-              <th>Proprietário</th>
-              <th class="actions-col">Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <tr>
-              <td colspan="7" class="empty-state">Carregando registros...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </div>
-
-  <!-- Modal de detalhes -->
-  <div id="detailsModal" class="modal hidden">
-    <div class="modal-backdrop" data-close="detailsModal"></div>
-    <div class="modal-content modal-lg">
-      <div class="modal-header">
+    <!-- CONTEÚDO -->
+    <div id="mainContent" class="main-content">
+      <header class="topbar">
         <div>
-          <h3>Detalhes do associado</h3>
-          <p id="detailsSubtitle" class="modal-subtitle"></p>
+          <img src="assets/logo vida branco horizontal.png" style="width: 300px;" alt="">
+          <h1>Gerenciamento de Associados</h1>
+          <p class="subtitle">
+            Cadastro, consulta e manutenção dos associados em tempo real.
+          </p>
         </div>
-        <button class="icon-btn" data-close="detailsModal">✕</button>
-      </div>
-      <div id="detailsContent" class="details-grid"></div>
-    </div>
-  </div>
 
-  <!-- Modal de formulário -->
-  <div id="formModal" class="modal hidden">
-    <div class="modal-backdrop" data-close="formModal"></div>
-    <div class="modal-content modal-xl">
-      <form id="associateForm">
+        <button id="btnNovo" class="btn btn-primary">+ Novo associado</button>
+      </header>
+
+      <section class="panel filters">
+        <div class="input-group">
+          <label for="searchInput">Buscar associado</label>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Busque por nome, razão social, município, anjo, CNPJ..."
+          />
+        </div>
+
+        <div class="stats-section">
+          <div class="stats">
+            <div class="stat-card">
+              <span class="stat-label">Total</span>
+              <strong id="totalRecords">0</strong>
+            </div>
+          </div>
+          
+          <button id="btnHistory" class="history-btn">
+            <i class="fas fa-history"></i>
+            Ver Histórico
+          </button>
+        </div>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="table-header">
+          <h2>Lista de associados</h2>
+          <button id="btnReload" class="btn btn-secondary">Atualizar</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome Fantasia</th>
+                <th>Razão Social</th>
+                <th>Município / UF</th>
+                <th>Anjo</th>
+                <th>Proprietário</th>
+                <th class="actions-col">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr>
+                <td colspan="7" class="empty-state">Carregando registros...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modal de detalhes -->
+    <div id="detailsModal" class="modal hidden">
+      <div class="modal-backdrop" data-close="detailsModal"></div>
+      <div class="modal-content modal-lg">
         <div class="modal-header">
           <div>
-            <h3 id="formTitle">Novo associado</h3>
-            <p class="modal-subtitle">Preencha os dados do cadastro</p>
+            <h3>Detalhes do associado</h3>
+            <p id="detailsSubtitle" class="modal-subtitle"></p>
           </div>
-          <button type="button" class="icon-btn" data-close="formModal">✕</button>
+          <button class="icon-btn" data-close="detailsModal">✕</button>
+        </div>
+        <div id="detailsContent" class="details-grid"></div>
+      </div>
+    </div>
+
+    <!-- Modal de formulário -->
+    <div id="formModal" class="modal hidden">
+      <div class="modal-backdrop" data-close="formModal"></div>
+      <div class="modal-content modal-xl">
+        <form id="associateForm">
+          <div class="modal-header">
+            <div>
+              <h3 id="formTitle">Novo associado</h3>
+              <p class="modal-subtitle">Preencha os dados do cadastro</p>
+            </div>
+            <button type="button" class="icon-btn" data-close="formModal">✕</button>
+          </div>
+
+          <div id="formSections" class="form-sections"></div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-close="formModal">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary" id="btnSave">
+              Salvar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal de confirmação -->
+    <div id="confirmModal" class="modal hidden">
+      <div class="modal-backdrop" data-close="confirmModal"></div>
+      <div class="modal-content modal-sm">
+        <div class="modal-header">
+          <div>
+            <h3>Confirmar exclusão</h3>
+            <p class="modal-subtitle">Esta ação não poderá ser desfeita.</p>
+          </div>
+          <button class="icon-btn" data-close="confirmModal">✕</button>
         </div>
 
-        <div id="formSections" class="form-sections"></div>
+        <div class="confirm-body">
+          <p id="confirmText">Deseja realmente excluir este registro?</p>
+        </div>
 
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-close="formModal">
+          <button type="button" class="btn btn-secondary" data-close="confirmModal">
             Cancelar
           </button>
-          <button type="submit" class="btn btn-primary" id="btnSave">
-            Salvar
+          <button type="button" class="btn btn-danger" id="btnConfirmDelete">
+            Excluir
           </button>
         </div>
-      </form>
+      </div>
     </div>
-  </div>
 
-  <!-- Modal de confirmação -->
-  <div id="confirmModal" class="modal hidden">
-    <div class="modal-backdrop" data-close="confirmModal"></div>
-    <div class="modal-content modal-sm">
-      <div class="modal-header">
-        <div>
-          <h3>Confirmar exclusão</h3>
-          <p class="modal-subtitle">Esta ação não poderá ser desfeita.</p>
+    <!-- NOVO MODAL DE HISTÓRICO -->
+    <div id="historyModal" class="modal hidden">
+      <div class="modal-backdrop" data-close="historyModal"></div>
+      <div class="modal-content modal-history">
+        <div class="modal-header">
+          <div>
+            <h3>
+              <i class="fas fa-history"></i> 
+              Histórico de Modificações
+            </h3>
+            <p class="modal-subtitle">Acompanhe todas as alterações realizadas nos associados</p>
+          </div>
+          <button class="icon-btn" data-close="historyModal">✕</button>
         </div>
-        <button class="icon-btn" data-close="confirmModal">✕</button>
-      </div>
 
-      <div class="confirm-body">
-        <p id="confirmText">Deseja realmente excluir este registro?</p>
-      </div>
+        <div class="history-filters">
+          <select id="historyFilterType">
+            <option value="all">📋 Todos os eventos</option>
+            <option value="CREATE">➕ Criações</option>
+            <option value="UPDATE">✏️ Atualizações</option>
+            <option value="DELETE">🗑️ Exclusões</option>
+          </select>
+          <input type="text" id="historyFilterAssociate" placeholder="🔍 Buscar por associado...">
+          <button id="historyRefreshBtn" class="btn btn-secondary" style="padding: 8px 16px;">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+        </div>
 
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-close="confirmModal">
-          Cancelar
-        </button>
-        <button type="button" class="btn btn-danger" id="btnConfirmDelete">
-          Excluir
-        </button>
+        <div id="historyList" class="history-list">
+          <div class="history-loading">
+            <i class="fas fa-spinner fa-pulse"></i>
+            <p>Carregando histórico...</p>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div id="toast" class="toast hidden"></div>
+
   </div>
-
-  <div id="toast" class="toast hidden"></div>
-
-  <script src="app.js"></script>
-
-    </div>
 </div>
 
- <script>
-  //se não ouver o objeto user no local storage, redireciona para a tela de login
+<script src="app.js"></script>
+
+<script>
+  // Verificar autenticação
   if (!localStorage.getItem('user')) {
     window.location.href = 'login.html';
   }
- </script>
+
+ // ==================== FUNÇÕES DO HISTÓRICO ====================
+const FIREBASE_URL = "https://certificado-7974e-default-rtdb.firebaseio.com";
+let historicoData = [];
+
+// Lista de campos a serem ignorados no histórico
+const IGNORED_FIELDS = [
+  "data_certificado",
+  "data_relatorio_1",
+  "data_relatorio_2",
+  "data_relatorio_3",
+  "certificado_data", // variações possíveis
+  "data_certificado", 
+  "relatorio_1_data",
+  "relatorio_2_data", 
+  "relatorio_3_data"
+];
+
+// Função para verificar se um campo deve ser ignorado
+function shouldIgnoreField(fieldName) {
+  return IGNORED_FIELDS.includes(fieldName) || 
+         fieldName.toLowerCase().includes("data_certificado") ||
+         fieldName.toLowerCase().includes("data_relatorio");
+}
+
+// Função para filtrar alterações removendo campos ignorados
+function filterIgnoredFields(alteracoes) {
+  if (!alteracoes || !Array.isArray(alteracoes)) return [];
+  
+  return alteracoes.filter(alteracao => {
+    // Verifica se o campo deve ser ignorado
+    const campoNome = alteracao.campo || alteracao.rotulo || "";
+    
+    if (shouldIgnoreField(campoNome)) {
+      console.log(`Campo ignorado no histórico: ${campoNome}`);
+      return false;
+    }
+    
+    // Também verifica se o valor_antigo e valor_novo são strings vazias
+    const valorAntigoVazio = !alteracao.valor_antigo || alteracao.valor_antigo === "" || alteracao.valor_antigo === "(vazio)";
+    const valorNovoVazio = !alteracao.valor_novo || alteracao.valor_novo === "" || alteracao.valor_novo === "(vazio)";
+    
+    // Se ambos os valores são vazios, ignorar também
+    if (valorAntigoVazio && valorNovoVazio) {
+      return false;
+    }
+    
+    return true;
+  });
+}
+
+// Função para limpar dados completos removendo campos ignorados
+function cleanFullData(data) {
+  if (!data || typeof data !== 'object') return data;
+  
+  const cleanedData = {};
+  
+  for (const [key, value] of Object.entries(data)) {
+    if (!shouldIgnoreField(key)) {
+      cleanedData[key] = value;
+    }
+  }
+  
+  return cleanedData;
+}
+
+// Função para buscar histórico
+async function fetchHistory() {
+  const historyList = document.getElementById("historyList");
+  historyList.innerHTML = `
+    <div class="history-loading">
+      <i class="fas fa-spinner fa-pulse"></i>
+      <p>Carregando histórico...</p>
+    </div>
+  `;
+
+  try {
+    const response = await fetch(`${FIREBASE_URL}/historico.json`);
+    if (!response.ok) throw new Error("Erro ao carregar histórico");
+    
+    const data = await response.json();
+    
+    if (data) {
+      historicoData = Object.values(data)
+        .map(item => {
+          // Limpar alterações do item
+          if (item.dados && item.dados.alteracoes) {
+            item.dados.alteracoes = filterIgnoredFields(item.dados.alteracoes);
+          }
+          
+          // Limpar dados completos
+          if (item.dados && item.dados.dados_completos) {
+            item.dados.dados_completos = cleanFullData(item.dados.dados_completos);
+          }
+          
+          if (item.dados && item.dados.dados_anteriores) {
+            item.dados.dados_anteriores = cleanFullData(item.dados.dados_anteriores);
+          }
+          
+          if (item.dados && item.dados.dados_novos) {
+            item.dados.dados_novos = cleanFullData(item.dados.dados_novos);
+          }
+          
+          return item;
+        })
+        .filter(item => {
+          // Se for um UPDATE e não tem alterações após filtrar, não mostrar
+          if (item.tipo === "UPDATE" && (!item.dados.alteracoes || item.dados.alteracoes.length === 0)) {
+            return false;
+          }
+          return true;
+        })
+        .sort((a, b) => new Date(b.data) - new Date(a.data));
+    } else {
+      historicoData = [];
+    }
+    
+    renderHistory();
+  } catch (error) {
+    console.error(error);
+    historyList.innerHTML = `
+      <div class="history-empty">
+        <i class="fas fa-exclamation-triangle"></i>
+        <p>Erro ao carregar histórico</p>
+        <p style="font-size: 12px; margin-top: 8px;">${error.message}</p>
+      </div>
+    `;
+  }
+}
+
+// Renderizar histórico
+function renderHistory() {
+  const historyList = document.getElementById("historyList");
+  const filterType = document.getElementById("historyFilterType").value;
+  const filterAssociate = document.getElementById("historyFilterAssociate").value.toLowerCase().trim();
+  
+  let filtered = historicoData;
+  
+  if (filterType !== "all") {
+    filtered = filtered.filter(item => item.tipo === filterType);
+  }
+  
+  if (filterAssociate) {
+    filtered = filtered.filter(item => {
+      const nomeFantasia = item.dados?.nome_fantasia || "";
+      const razaoSocial = item.dados?.razao_social || "";
+      const id = item.dados?.id || "";
+      return nomeFantasia.toLowerCase().includes(filterAssociate) ||
+             razaoSocial.toLowerCase().includes(filterAssociate) ||
+             id.includes(filterAssociate);
+    });
+  }
+  
+  if (filtered.length === 0) {
+    historyList.innerHTML = `
+      <div class="history-empty">
+        <i class="fas fa-inbox"></i>
+        <p>Nenhum evento encontrado no histórico</p>
+        <p style="font-size: 12px; margin-top: 8px;">As modificações nos associados aparecerão aqui</p>
+      </div>
+    `;
+    return;
+  }
+  
+  historyList.innerHTML = filtered.map(item => renderHistoryItem(item)).join("");
+}
+
+function renderHistoryItem(item) {
+  const tipo = item.tipo;
+  const dados = item.dados || {};
+  const usuario = item.usuario || { nome: "Sistema", email: "" };
+  const date = new Date(item.data);
+  const formattedDate = formatHistoryDate(date);
+  
+  const nomeAssociado = dados.nome_fantasia || dados.razao_social || `ID: ${dados.id}`;
+  const idAssociado = dados.id;
+  
+  let contentHTML = "";
+  
+  if (tipo === "UPDATE" && dados.alteracoes && dados.alteracoes.length > 0) {
+    contentHTML = `
+      <div class="history-changes">
+        ${dados.alteracoes.slice(0, 5).map(alt => `
+          <div class="history-change-row">
+            <span class="history-change-field">${escapeHtml(alt.rotulo || alt.campo)}</span>
+            <span class="history-change-old">${escapeHtml(truncate(alt.valor_antigo, 40))}</span>
+            <span class="history-arrow"><i class="fas fa-arrow-right"></i></span>
+            <span class="history-change-new">${escapeHtml(truncate(alt.valor_novo, 40))}</span>
+          </div>
+        `).join("")}
+        ${dados.alteracoes.length > 5 ? `
+          <div style="font-size: 11px; color: #6b7aa1; padding-top: 8px; text-align: center;">
+            + ${dados.alteracoes.length - 5} outras alterações
+          </div>
+        ` : ""}
+      </div>
+    `;
+  } else if (tipo === "CREATE") {
+    // Limpa os dados completos antes de exibir
+    const dadosCompletos = dados.dados_completos ? cleanFullData(dados.dados_completos) : {};
+    const principaisCampos = ["RAZÃO_SOCIAL", "NOME_FANTASIA", "PROPRIETÁRIO", "MUNICÍPIO", "Whatsapp", "CNPJ"];
+    const camposExistentes = principaisCampos.filter(c => dadosCompletos[c]);
+    
+    contentHTML = `
+      <div class="history-changes">
+        ${camposExistentes.map(campo => `
+          <div class="history-change-row">
+            <span class="history-change-field">${escapeHtml(campo)}</span>
+            <span class="history-change-new"><i class="fas fa-plus-circle"></i> ${escapeHtml(truncate(dadosCompletos[campo], 40))}</span>
+          </div>
+        `).join("")}
+      </div>
+      ${dados.dados_completos ? `
+        <details class="history-full-data">
+          <summary><i class="fas fa-code"></i> Ver todos os dados</summary>
+          <pre>${JSON.stringify(dadosCompletos, null, 2)}</pre>
+        </details>
+      ` : ""}
+    `;
+  } else if (tipo === "DELETE") {
+    // Limpa os dados completos antes de exibir
+    const dadosCompletos = dados.dados_completos ? cleanFullData(dados.dados_completos) : {};
+    
+    contentHTML = `
+      <div class="history-changes">
+        <div class="history-change-row">
+          <span class="history-change-field">Status</span>
+          <span class="history-change-old" style="text-decoration: none; color: #ef4444;">
+            <i class="fas fa-trash-alt"></i> Registro removido
+          </span>
+        </div>
+      </div>
+      ${Object.keys(dadosCompletos).length > 0 ? `
+        <details class="history-full-data">
+          <summary><i class="fas fa-archive"></i> Dados do associado excluído</summary>
+          <pre>${JSON.stringify(dadosCompletos, null, 2)}</pre>
+        </details>
+      ` : ""}
+    `;
+  }
+  
+  const badgeClass = tipo === "CREATE" ? "create" : (tipo === "UPDATE" ? "update" : "delete");
+  const badgeIcon = tipo === "CREATE" ? "➕" : (tipo === "UPDATE" ? "✏️" : "🗑️");
+  const badgeText = tipo === "CREATE" ? "CRIOU" : (tipo === "UPDATE" ? "EDITOU" : "EXCLUIU");
+  
+  return `
+    <div class="history-item">
+      <div class="history-item-header">
+        <span class="history-badge ${badgeClass}">
+          ${badgeIcon} ${badgeText}
+        </span>
+        <span class="history-associate">${escapeHtml(nomeAssociado)}</span>
+        ${idAssociado ? `<span style="font-size: 11px; color: #6b7aa1;">#${escapeHtml(idAssociado)}</span>` : ""}
+        <span class="history-date">
+          <i class="far fa-clock"></i> ${formattedDate}
+        </span>
+      </div>
+      <div class="history-user">
+        <i class="fas fa-user-circle"></i>
+        <span>${escapeHtml(usuario.nome || "Sistema")}</span>
+        ${usuario.email ? `<span style="font-size: 11px;">(${escapeHtml(usuario.email)})</span>` : ""}
+      </div>
+      ${contentHTML}
+    </div>
+  `;
+}
+
+function formatHistoryDate(date) {
+  const now = new Date();
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+  
+  if (diffMins < 1) return "agora mesmo";
+  if (diffMins < 60) return `${diffMins} min atrás`;
+  if (diffHours < 24) return `${diffHours} h atrás`;
+  if (diffDays === 1) return "ontem";
+  if (diffDays < 7) return `${diffDays} dias atrás`;
+  
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function truncate(str, maxLen) {
+  if (!str) return "—";
+  const s = String(str);
+  return s.length > maxLen ? s.substring(0, maxLen) + "..." : s;
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function openHistoryModal() {
+  const modal = document.getElementById("historyModal");
+  modal.classList.remove("hidden");
+  fetchHistory();
+}
+
+// Configurar eventos do histórico
+function setupHistoryEvents() {
+  const btnHistory = document.getElementById("btnHistory");
+  if (btnHistory) {
+    btnHistory.addEventListener("click", openHistoryModal);
+  }
+  
+  const historyFilterType = document.getElementById("historyFilterType");
+  const historyFilterAssociate = document.getElementById("historyFilterAssociate");
+  const historyRefreshBtn = document.getElementById("historyRefreshBtn");
+  
+  if (historyFilterType) historyFilterType.addEventListener("change", renderHistory);
+  if (historyFilterAssociate) historyFilterAssociate.addEventListener("input", renderHistory);
+  if (historyRefreshBtn) historyRefreshBtn.addEventListener("click", fetchHistory);
+}
+
+// Aguardar DOM carregar para configurar eventos
+document.addEventListener("DOMContentLoaded", () => {
+  setupHistoryEvents();
+});
+</script>
 
 </body>
 </html>

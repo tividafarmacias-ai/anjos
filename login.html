@@ -26,7 +26,6 @@
       position: relative;
     }
 
-    /* Efeito de grid sutil */
     body::before {
       content: "";
       position: fixed;
@@ -60,7 +59,6 @@
       }
     }
 
-    /* Card principal */
     .login-card {
       background: rgba(20, 29, 47, 0.95);
       backdrop-filter: blur(10px);
@@ -76,7 +74,6 @@
       box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
     }
 
-    /* Header com logo */
     .login-header {
       text-align: center;
       margin-bottom: 36px;
@@ -91,7 +88,6 @@
       padding: 4px 10px;
       border-radius: 100px;
       border: 1px solid rgba(79, 140, 255, 0.25);
-   
     }
 
     .logo-icon {
@@ -131,7 +127,6 @@
       font-weight: 500;
     }
 
-    /* Formulário */
     .login-form {
       display: flex;
       flex-direction: column;
@@ -216,7 +211,6 @@
       color: #4f8cff;
     }
 
-    /* Opções extras */
     .login-options {
       display: flex;
       justify-content: space-between;
@@ -253,7 +247,6 @@
       text-decoration: underline;
     }
 
-    /* Botão de login */
     .login-btn {
       background: linear-gradient(135deg, #4f8cff, #3a6ee0);
       border: none;
@@ -298,7 +291,6 @@
       transform: translateY(1px);
     }
 
-    /* Demo credentials */
     .demo-credentials {
       margin-top: 28px;
       padding-top: 24px;
@@ -351,7 +343,6 @@
       color: #a7f3c0;
     }
 
-    /* Mensagem de erro/sucesso */
     .message-toast {
       position: fixed;
       bottom: 30px;
@@ -376,7 +367,6 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* Responsivo */
     @media (max-width: 520px) {
       .login-card {
         padding: 32px 24px;
@@ -419,7 +409,7 @@
         <label><i class="fas fa-envelope"></i>Usuário</label>
         <div class="input-wrapper">
           <i class="fas fa-user"></i>
-          <input type="text" id="username"  autocomplete="off" value="">
+          <input type="text" id="username" autocomplete="off" placeholder="Digite seu usuário">
         </div>
       </div>
 
@@ -427,17 +417,15 @@
         <label><i class="fas fa-lock"></i> Senha</label>
         <div class="input-wrapper">
           <i class="fas fa-key"></i>
-          <input type="password" id="password"  >
-          <button type="button" class="password-toggle" id="togglePassword">
-          </button>
+          <input type="password" id="password" placeholder="Digite sua senha">
+      
         </div>
       </div>
 
       <div class="login-options">
         <label class="checkbox-label">
-          <input type="checkbox" checked> Lembrar-me
+          <input type="checkbox" id="rememberCheckbox"> Lembrar-me
         </label>
-        <a href="#" style="display: none;" class="forgot-link">Esqueceu a senha?</a>
       </div>
 
       <button type="submit" class="login-btn">
@@ -446,16 +434,18 @@
       </button>
     </form>
 
-
+  
   </div>
 </div>
 
 <div id="toastMsg" class="message-toast">
   <i class="fas fa-circle-check" style="margin-right: 8px; color: #22c55e;"></i>
-  Login simulado com sucesso!
+  Login realizado com sucesso!
 </div>
 
 <script>
+  const FIREBASE_URL = "https://certificado-7974e-default-rtdb.firebaseio.com";
+
   (function() {
     // Toggle password visibility
     const toggleBtn = document.getElementById('togglePassword');
@@ -479,10 +469,8 @@
     function showToast(message, isError = false) {
       if (!toast) return;
       
-      // Clear previous timeout
       if (window.toastTimeout) clearTimeout(window.toastTimeout);
       
-      // Set icon and style based on type
       const iconSpan = toast.querySelector('i');
       if (isError) {
         iconSpan.className = 'fas fa-circle-exclamation';
@@ -502,24 +490,84 @@
         toast.classList.remove('show');
       }, 3000);
     }
-    
-    // Form handler (simulação)
+
+    // Função para buscar usuários do Firebase
+    async function fetchUsers() {
+      try {
+        const response = await fetch(`${FIREBASE_URL}/usuarios.json`);
+        if (!response.ok) throw new Error("Erro ao buscar usuários");
+        const data = await response.json();
+        return data || [];
+      } catch (error) {
+        console.error("Erro ao carregar usuários:", error);
+        return [];
+      }
+    }
+
+    // Função para validar login
+    async function validateLogin(username, password) {
+      const users = await fetchUsers();
+      
+      // Busca o usuário pelo username
+      const user = users.find(u => 
+        u.username && u.username.toLowerCase() === username.toLowerCase()
+      );
+      
+      if (user && user.password === password) {
+        return {
+          success: true,
+          user: {
+            name: user.name,
+            username: user.username
+          }
+        };
+      }
+      
+      return {
+        success: false,
+        message: "Usuário ou senha incorretos"
+      };
+    }
+
+    // Carregar credenciais salvas
+    function loadSavedCredentials() {
+      const savedUser = localStorage.getItem('savedUser');
+      if (savedUser) {
+        try {
+          const user = JSON.parse(savedUser);
+          document.getElementById('username').value = user.username;
+          document.getElementById('password').value = user.password;
+          document.getElementById('rememberCheckbox').checked = true;
+        } catch (e) {
+          console.error("Erro ao carregar credenciais salvas:", e);
+        }
+      }
+    }
+
+    // Salvar credenciais se "Lembrar-me" estiver marcado
+    function saveCredentials(username, password, remember) {
+      if (remember) {
+        localStorage.setItem('savedUser', JSON.stringify({ username, password }));
+      } else {
+        localStorage.removeItem('savedUser');
+      }
+    }
+
+    // Form handler com validação real
     const form = document.getElementById('loginForm');
     if (form) {
-      form.addEventListener('submit', function(e) {
+      // Carregar credenciais salvas ao iniciar
+      loadSavedCredentials();
+      
+      form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
         const username = document.getElementById('username')?.value.trim() || '';
         const password = document.getElementById('password')?.value.trim() || '';
+        const remember = document.getElementById('rememberCheckbox')?.checked || false;
         
-        // Simulação simples de validação visual (sem integração real)
         if (!username || !password) {
           showToast('❌ Preencha usuário e senha para continuar', true);
-          return;
-        }
-        
-        if (username.length < 2) {
-          showToast('⚠️ Usuário deve ter pelo menos 2 caracteres', true);
           return;
         }
         
@@ -529,19 +577,20 @@
         btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Autenticando...';
         btn.disabled = true;
         
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.disabled = false;
+        try {
+          // Validar login com Firebase
+          const result = await validateLogin(username, password);
           
-          // Simula sucesso (pode ser admin@finance.com/admin123 ou qualquer coisa)
-          if ((username === 'bryan.silva' && password === '@Verte06') || 
-              (username === 'admin' && password === 'admin123') ||
-              (username === 'demo' && password === 'demo')) {
-            showToast('✅ Acesso permitido! Redirecionando para o dashboard...');
+          if (result.success) {
+            showToast(`✅ Bem-vindo, ${result.user.name}! Redirecionando...`);
             
-            // Simular redirecionamento após 1.5s (apenas visual, não há página real)
+            // Salvar credenciais se solicitado
+            saveCredentials(username, password, remember);
+            
+            // Salvar usuário logado no localStorage
+            localStorage.setItem('user', JSON.stringify(result.user));
+            
             setTimeout(() => {
-              // Cria overlay de transição suave
               const overlay = document.createElement('div');
               overlay.style.position = 'fixed';
               overlay.style.top = '0';
@@ -557,17 +606,13 @@
               
               setTimeout(() => { overlay.style.opacity = '1'; }, 10);
               
-              //adiciona o objeto user no local storage
-              localStorage.setItem('user', JSON.stringify({ username: username, password: password }));
-
               setTimeout(() => {
-   
-                // Limpa formulário não obrigatório
-                window.location.href = 'index.html'; // apenas mantém na página mas mostra sucesso
+                window.location.href = 'index.html';
               }, 500);
             }, 1500);
           } else {
-            showToast('🔒 Credenciais inválidas. Tente admin@finance.com / admin123', true);
+            showToast(`🔒 ${result.message}`, true);
+            
             // Shake effect no card
             const card = document.querySelector('.login-card');
             if (card) {
@@ -576,11 +621,17 @@
               setTimeout(() => { card.style.animation = ''; }, 400);
             }
           }
-        }, 700);
+        } catch (error) {
+          console.error("Erro durante login:", error);
+          showToast('❌ Erro ao conectar ao servidor. Tente novamente.', true);
+        } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+        }
       });
     }
     
-    // Adiciona keyframe shake dinamicamente se não existir
+    // Adiciona keyframe shake
     if (!document.querySelector('#shakeKeyframe')) {
       const styleSheet = document.createElement('style');
       styleSheet.id = 'shakeKeyframe';
@@ -594,8 +645,7 @@
       document.head.appendChild(styleSheet);
     }
     
-    // Preencher demo com um clique? Opcional: clicar no código copia? mas não necessário.
-    // Adicionar efeito visual nos campos foco
+    // Efeito visual nos campos
     const inputs = document.querySelectorAll('.input-wrapper input');
     inputs.forEach(input => {
       input.addEventListener('focus', () => {
@@ -608,8 +658,7 @@
       });
     });
     
-    // Adicionar placeholder interativo extra
-    console.log('Tela de login moderna pronta — estilos finance dashboard');
+    console.log('Tela de login com validação Firebase integrada!');
   })();
 </script>
 </body>
