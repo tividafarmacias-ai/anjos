@@ -186,5 +186,13 @@
 
     </div>
 </div>
+
+ <script>
+  //se não ouver o objeto user no local storage, redireciona para a tela de login
+  if (!localStorage.getItem('user')) {
+    window.location.href = 'login.html';
+  }
+ </script>
+
 </body>
 </html>

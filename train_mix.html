@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Procedimento · MIX de Produtos</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* MANTIVE SEU PADRÃO VISUAL */
+body {
+  font-family: "Inter", sans-serif;
+  background: #0b1220;
+  color: #e5edf9;
+  margin: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.header {
+  background: linear-gradient(135deg,#121b2f,#1a2540);
+  padding: 24px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.passo {
+  background: #141d2f;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #2a3554;
+}
+
+.passo h2 {
+  margin-bottom: 10px;
+}
+
+ul {
+  line-height: 1.6;
+}
+
+.img-placeholder {
+  margin-top: 15px;
+  height: 220px;
+  border-radius: 14px;
+  border: 2px dashed #4f8cff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #98a6c7;
+  font-size: 14px;
+  background: rgba(79,140,255,0.05);
+}
+
+.highlight {
+  background: rgba(79,140,255,0.1);
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    <h1>📊 Processo de MIX de Produtos</h1>
+    <p>Guia completo para análise, construção e entrega do MIX ideal da loja.</p>
+  </div>
+
+  <!-- ETAPA 1 -->
+  <div class="passo">
+    <h2>1. Dados Necessários</h2>
+    <ul>
+      <li>Estoque da loja em XLS com EAN completo</li>
+      <li>Relatório de giro de produtos (BI)</li>
+    </ul>
+
+    <div class="img-placeholder">
+      📷 INSERIR IMAGEM DO POWER BI / ENTRADA NA BÚSSOLA
+    </div>
+  </div>
+
+  <!-- ETAPA 2 -->
+  <div class="passo">
+    <h2>2. Extração no Power BI</h2>
+    <ul>
+      <li>Acessar o Power BI</li>
+      <li>Entrar em <strong>Bússola UTC</strong></li>
+      <li>Filtrar pelo nome da loja (PDV)</li>
+      <li>Selecionar categoria</li>
+      <li>Tirar print em "Reais"</li>
+    </ul>
+
+    <div class="img-placeholder">
+      📷 PRINT DO FILTRO + CATEGORIA
+    </div>
+  </div>
+
+  <!-- ETAPA 3 -->
+  <div class="passo">
+    <h2>3. Exportação de Dados</h2>
+    <ul>
+      <li>Entrar em UTC x Loja</li>
+      <li>Verificar filtros (apenas loja)</li>
+      <li>Clicar em "..."</li>
+      <li>Exportar → Dados com layout atual</li>
+    </ul>
+
+    <div class="img-placeholder">
+      📷 PRINT EXPORTAÇÃO POWER BI
+    </div>
+  </div>
+
+  <!-- ETAPA 4 -->
+  <div class="passo">
+    <h2>4. Construção das Bases</h2>
+    <ul>
+      <li>Base do mercado (BI)</li>
+      <li>Estoque da loja (TRIER)</li>
+      <li>Média de vendas da rede</li>
+    </ul>
+
+    <div class="highlight">
+      ⚠️ Configuração do estoque:
+      <ul>
+        <li>Saldo maior que zero</li>
+        <li>Com custo</li>
+        <li>EAN completo</li>
+        <li>Descrição completa</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ETAPA 5 -->
+  <div class="passo">
+    <h2>5. Tratamento das Planilhas</h2>
+    <ul>
+      <li>Desfazer mesclagem</li>
+      <li>Padronizar colunas</li>
+      <li>Copiar dados para planilha MIX</li>
+      <li>Colar:
+        <ul>
+          <li>Aba estoque</li>
+          <li>Aba base</li>
+          <li>Aba média rede</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ETAPA 6 -->
+  <div class="passo">
+    <h2>6. Ajustes Técnicos (Excel)</h2>
+    <ul>
+      <li>Converter EAN para número</li>
+      <li>Remover casas decimais</li>
+      <li>Aplicar comandos:
+        <ul>
+          <li>Ctrl + Shift + M</li>
+          <li>Ctrl + Shift + I</li>
+          <li>Ctrl + Shift + O</li>
+          <li>Ctrl + Shift + L</li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ETAPA 7 -->
+  <div class="passo">
+    <h2>7. Validação do MIX</h2>
+    <ul>
+      <li>Atualizar colunas de estoque e venda</li>
+      <li>Transformar fórmulas em valores</li>
+      <li>Testar aba de pedidos</li>
+    </ul>
+  </div>
+
+  <!-- ETAPA 8 -->
+  <div class="passo">
+    <h2>8. Análise Estratégica</h2>
+    <ul>
+      <li>Remover fabricantes sem relevância</li>
+      <li>Destacar oportunidades (ex: Cristália, Galderma)</li>
+      <li>Comparar com mercado</li>
+    </ul>
+  </div>
+
+  <!-- ETAPA 9 -->
+  <div class="passo">
+    <h2>9. Entrega Final</h2>
+    <ul>
+      <li>Criar arquivo final com:</li>
+      <ul>
+        <li>Aba Análise</li>
+        <li>Comparativo (com print)</li>
+        <li>Ação (plano para loja)</li>
+      </ul>
+      <li>Apresentar ao associado</li>
+    </ul>
+
+    <div class="img-placeholder">
+      📷 PRINT FINAL PARA APRESENTAÇÃO
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

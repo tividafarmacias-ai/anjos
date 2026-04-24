@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Login | Finance Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at 20% 30%, rgba(79, 140, 255, 0.12), transparent 45%),
+                  radial-gradient(circle at 90% 70%, rgba(239, 68, 68, 0.08), transparent 35%),
+                  #0b1220;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+    }
+
+    /* Efeito de grid sutil */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(42, 53, 84, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(42, 53, 84, 0.1) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 460px;
+      position: relative;
+      z-index: 2;
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Card principal */
+    .login-card {
+      background: rgba(20, 29, 47, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid #2a3554;
+      border-radius: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(79, 140, 255, 0.1) inset;
+      padding: 22px 40px;
+      transition: all 0.3s ease;
+    }
+
+    .login-card:hover {
+      border-color: rgba(79, 140, 255, 0.3);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+    }
+
+    /* Header com logo */
+    .login-header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(79, 141, 255, 0);
+      backdrop-filter: blur(8px);
+      padding: 4px 10px;
+      border-radius: 100px;
+      border: 1px solid rgba(79, 140, 255, 0.25);
+   
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #4f8cff, #3f7cf0);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-weight: 800;
+      font-size: 20px;
+      background: linear-gradient(135deg, #e5edf9, #b8d1ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .login-header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #ffffff, #b8d1ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .login-subtitle {
+      color: #98a6c7;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* Formulário */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .input-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #b6c5e2;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-group label i {
+      font-size: 14px;
+      color: #4f8cff;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i:first-child {
+      position: absolute;
+      left: 16px;
+      color: #98a6c7;
+      font-size: 16px;
+      transition: color 0.2s;
+      pointer-events: none;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      background: #0d1526;
+      border: 1.5px solid #2a3554;
+      border-radius: 16px;
+      padding: 14px 16px 14px 46px;
+      font-size: 15px;
+      font-weight: 500;
+      color: #e5edf9;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .input-wrapper input:focus {
+      border-color: #4f8cff;
+      box-shadow: 0 0 0 3px rgba(79, 140, 255, 0.15);
+    }
+
+    .input-wrapper input::placeholder {
+      color: #4a5578;
+      font-weight: 400;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 16px;
+      background: none;
+      border: none;
+      color: #98a6c7;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s;
+    }
+
+    .password-toggle:hover {
+      color: #4f8cff;
+    }
+
+    /* Opções extras */
+    .login-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #98a6c7;
+      cursor: pointer;
+    }
+
+    .checkbox-label input {
+      width: 16px;
+      height: 16px;
+      accent-color: #4f8cff;
+      cursor: pointer;
+    }
+
+    .forgot-link {
+      font-size: 13px;
+      color: #4f8cff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .forgot-link:hover {
+      color: #3f7cf0;
+      text-decoration: underline;
+    }
+
+    /* Botão de login */
+    .login-btn {
+      background: linear-gradient(135deg, #4f8cff, #3a6ee0);
+      border: none;
+      padding: 14px 20px;
+      border-radius: 18px;
+      font-weight: 700;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(79, 140, 255, 0.4);
+      background: linear-gradient(135deg, #5c96ff, #4a7cf5);
+    }
+
+    .login-btn:hover::before {
+      left: 100%;
+    }
+
+    .login-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Demo credentials */
+    .demo-credentials {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid #2a3554;
+      text-align: center;
+    }
+
+    .demo-title {
+      font-size: 12px;
+      color: #6b7aa1;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .demo-box {
+      background: rgba(13, 21, 38, 0.7);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      border: 1px solid #2a3554;
+    }
+
+    .demo-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #b8d1ff;
+    }
+
+    .demo-item i {
+      color: #4f8cff;
+      font-size: 12px;
+    }
+
+    .demo-item code {
+      background: #0b1220;
+      padding: 4px 8px;
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      color: #a7f3c0;
+    }
+
+    /* Mensagem de erro/sucesso */
+    .message-toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e2a4a;
+      border-left: 4px solid #4f8cff;
+      padding: 12px 24px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #e5edf9;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      z-index: 1000;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .message-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Responsivo */
+    @media (max-width: 520px) {
+      .login-card {
+        padding: 32px 24px;
+      }
+      
+      .login-header h1 {
+        font-size: 26px;
+      }
+      
+      .demo-box {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      .message-toast {
+        white-space: normal;
+        text-align: center;
+        max-width: 90%;
+        border-radius: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="logo-badge">
+        <img src="assets/logo vida branco vertical.png" alt="" style="width: 160px;">
+        <span class="logo-text"></span>
+      </div>
+      <h1>Bem-vindo de volta</h1>
+      <p class="login-subtitle">Acesse sua conta para continuar</p>
+    </div>
+
+    <form class="login-form" id="loginForm">
+      <div class="input-group">
+        <label><i class="fas fa-envelope"></i>Usuário</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user"></i>
+          <input type="text" id="username"  autocomplete="off" value="">
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label><i class="fas fa-lock"></i> Senha</label>
+        <div class="input-wrapper">
+          <i class="fas fa-key"></i>
+          <input type="password" id="password"  >
+          <button type="button" class="password-toggle" id="togglePassword">
+          </button>
+        </div>
+      </div>
+
+      <div class="login-options">
+        <label class="checkbox-label">
+          <input type="checkbox" checked> Lembrar-me
+        </label>
+        <a href="#" style="display: none;" class="forgot-link">Esqueceu a senha?</a>
+      </div>
+
+      <button type="submit" class="login-btn">
+        <i class="fas fa-arrow-right-to-bracket"></i>
+        Entrar
+      </button>
+    </form>
+
+
+  </div>
+</div>
+
+<div id="toastMsg" class="message-toast">
+  <i class="fas fa-circle-check" style="margin-right: 8px; color: #22c55e;"></i>
+  Login simulado com sucesso!
+</div>
+
+<script>
+  (function() {
+    // Toggle password visibility
+    const toggleBtn = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    
+    if (toggleBtn && passwordInput) {
+      toggleBtn.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        const icon = toggleBtn.querySelector('i');
+        if (icon) {
+          icon.classList.toggle('fa-eye');
+          icon.classList.toggle('fa-eye-slash');
+        }
+      });
+    }
+
+    // Toast management
+    const toast = document.getElementById('toastMsg');
+    
+    function showToast(message, isError = false) {
+      if (!toast) return;
+      
+      // Clear previous timeout
+      if (window.toastTimeout) clearTimeout(window.toastTimeout);
+      
+      // Set icon and style based on type
+      const iconSpan = toast.querySelector('i');
+      if (isError) {
+        iconSpan.className = 'fas fa-circle-exclamation';
+        iconSpan.style.color = '#ef4444';
+        toast.style.borderLeftColor = '#ef4444';
+        toast.innerHTML = `<i class="fas fa-circle-exclamation" style="margin-right: 8px; color: #ef4444;"></i> ${message}`;
+      } else {
+        iconSpan.className = 'fas fa-circle-check';
+        iconSpan.style.color = '#22c55e';
+        toast.style.borderLeftColor = '#4f8cff';
+        toast.innerHTML = `<i class="fas fa-circle-check" style="margin-right: 8px; color: #22c55e;"></i> ${message}`;
+      }
+      
+      toast.classList.add('show');
+      
+      window.toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Form handler (simulação)
+    const form = document.getElementById('loginForm');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username')?.value.trim() || '';
+        const password = document.getElementById('password')?.value.trim() || '';
+        
+        // Simulação simples de validação visual (sem integração real)
+        if (!username || !password) {
+          showToast('❌ Preencha usuário e senha para continuar', true);
+          return;
+        }
+        
+        if (username.length < 2) {
+          showToast('⚠️ Usuário deve ter pelo menos 2 caracteres', true);
+          return;
+        }
+        
+        // Simular loading no botão
+        const btn = form.querySelector('.login-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Autenticando...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+          
+          // Simula sucesso (pode ser admin@finance.com/admin123 ou qualquer coisa)
+          if ((username === 'bryan.silva' && password === '@Verte06') || 
+              (username === 'admin' && password === 'admin123') ||
+              (username === 'demo' && password === 'demo')) {
+            showToast('✅ Acesso permitido! Redirecionando para o dashboard...');
+            
+            // Simular redirecionamento após 1.5s (apenas visual, não há página real)
+            setTimeout(() => {
+              // Cria overlay de transição suave
+              const overlay = document.createElement('div');
+              overlay.style.position = 'fixed';
+              overlay.style.top = '0';
+              overlay.style.left = '0';
+              overlay.style.width = '100%';
+              overlay.style.height = '100%';
+              overlay.style.backgroundColor = '#0b1220';
+              overlay.style.zIndex = '9999';
+              overlay.style.opacity = '0';
+              overlay.style.transition = 'opacity 0.4s ease';
+              overlay.style.pointerEvents = 'none';
+              document.body.appendChild(overlay);
+              
+              setTimeout(() => { overlay.style.opacity = '1'; }, 10);
+              
+              //adiciona o objeto user no local storage
+              localStorage.setItem('user', JSON.stringify({ username: username, password: password }));
+
+              setTimeout(() => {
+   
+                // Limpa formulário não obrigatório
+                window.location.href = 'index.html'; // apenas mantém na página mas mostra sucesso
+              }, 500);
+            }, 1500);
+          } else {
+            showToast('🔒 Credenciais inválidas. Tente admin@finance.com / admin123', true);
+            // Shake effect no card
+            const card = document.querySelector('.login-card');
+            if (card) {
+              card.style.transform = 'translateX(0)';
+              card.style.animation = 'shake 0.4s ease-in-out';
+              setTimeout(() => { card.style.animation = ''; }, 400);
+            }
+          }
+        }, 700);
+      });
+    }
+    
+    // Adiciona keyframe shake dinamicamente se não existir
+    if (!document.querySelector('#shakeKeyframe')) {
+      const styleSheet = document.createElement('style');
+      styleSheet.id = 'shakeKeyframe';
+      styleSheet.textContent = `
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-6px); }
+          75% { transform: translateX(6px); }
+        }
+      `;
+      document.head.appendChild(styleSheet);
+    }
+    
+    // Preencher demo com um clique? Opcional: clicar no código copia? mas não necessário.
+    // Adicionar efeito visual nos campos foco
+    const inputs = document.querySelectorAll('.input-wrapper input');
+    inputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        const wrapper = input.closest('.input-wrapper');
+        if (wrapper) wrapper.style.transform = 'scale(1.01)';
+      });
+      input.addEventListener('blur', () => {
+        const wrapper = input.closest('.input-wrapper');
+        if (wrapper) wrapper.style.transform = 'scale(1)';
+      });
+    });
+    
+    // Adicionar placeholder interativo extra
+    console.log('Tela de login moderna pronta — estilos finance dashboard');
+  })();
+</script>
+</body>
+</html>
