@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9" />
   <title>Gerenciador de Associados - Vida Farmácias</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/index.css" />
   <style>
     /* Estilos adicionais para o modal de histórico */
     .stats-section {
@@ -24,7 +24,7 @@
     }
 
     .history-btn {
-      background: linear-gradient(135deg, #4f8cff, #3a6ee0);
+      background: linear-gradient(135deg, #084F98, #3a6ee0);
       border: none;
       padding: 12px 20px;
       border-radius: 14px;
@@ -270,25 +270,20 @@
     }
 
     .history-list::-webkit-scrollbar-thumb:hover {
-      background: #4f8cff;
+      background: #084F98;
     }
   </style>
 </head>
-<body>
+<body style="display: none;">
 
 <div class="app">
   <div class="layout">
   
     <!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar collapsed">
-      <div class="sidebar-header">
-        <button id="toggleSidebar" class="toggle-btn">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-
+   
       <nav class="sidebar-menu">
-        <a href="index.html" class="menu-item">
+        <a href="index.html" class="menu-item" style=" background: rgba(79, 140, 255, 0.1);">
           <i class="fas fa-users"></i>
           <span>Associados</span>
         </a>
@@ -307,6 +302,11 @@
           <i class="fa-regular fa-calendar-check"></i>
           <span>Processos</span>
         </a>
+
+        <a onclick="logout()" class="menu-item">
+          <i style="color: #F21E26;" class="fas fa-sign-out-alt"></i>
+          <span>Sair</span>
+        </a>
       </nav>
     </aside>
 
@@ -314,14 +314,12 @@
     <div id="mainContent" class="main-content">
       <header class="topbar">
         <div>
-          <img src="assets/logo vida branco horizontal.png" style="width: 300px;" alt="">
+          <img src="assets/logo vida branco horizontal.png" style="width: 200px;" alt="">
           <h1>Gerenciamento de Associados</h1>
-          <p class="subtitle">
-            Cadastro, consulta e manutenção dos associados em tempo real.
-          </p>
+    
         </div>
 
-        <button id="btnNovo" class="btn btn-primary">+ Novo associado</button>
+        <button id="btnNovo" class="btn btn-primary" style="display: none;">+ Novo associado</button>
       </header>
 
       <section class="panel filters">
@@ -337,14 +335,17 @@
         <div class="stats-section">
           <div class="stats">
             <div class="stat-card">
-              <span class="stat-label">Total</span>
-              <strong id="totalRecords">0</strong>
+             <img src="assets/logo vida branco vertical.png" style="width: 60px;" alt="">
+              <div style="margin-right: 10px; font-size: 25px;">|  </div>
+             <div> 
+             <strong id="totalRecords" >0</strong>
+             
+             </div>
             </div>
           </div>
           
           <button id="btnHistory" class="history-btn">
             <i class="fas fa-history"></i>
-            Ver Histórico
           </button>
         </div>
       </section>
@@ -352,7 +353,7 @@
       <section class="panel table-panel">
         <div class="table-header">
           <h2>Lista de associados</h2>
-          <button id="btnReload" class="btn btn-secondary">Atualizar</button>
+          <button id="btnReload" class="btn btn-secondary"><i class="fas fa-rotate"></i> </button>
         </div>
 
         <div class="table-wrapper">
@@ -489,13 +490,20 @@
   </div>
 </div>
 
-<script src="app.js"></script>
+<script src="js/index.js"></script>
 
 <script>
+
+  const body = document.querySelector('body');
+
+
+
   // Verificar autenticação
   if (!localStorage.getItem('user')) {
     window.location.href = 'login.html';
   }
+
+  body.style.display = 'block';
 
  // ==================== FUNÇÕES DO HISTÓRICO ====================
 const FIREBASE_URL = "https://certificado-7974e-default-rtdb.firebaseio.com";
@@ -826,6 +834,11 @@ function setupHistoryEvents() {
 document.addEventListener("DOMContentLoaded", () => {
   setupHistoryEvents();
 });
+
+function logout() {
+  localStorage.removeItem("user");
+  window.location.href = "login.html";
+}
 </script>
 
 </body>
